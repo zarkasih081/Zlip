@@ -469,22 +469,22 @@
             <!-- Settings -->
             <div class="lbl" data-i18n="cd_stg_lbl">Pengaturan Dek</div>
             
-            <div class="d-stg-row" style="margin-bottom:12px;">
+            <div class="d-stg-row" style="margin-bottom:16px;">
               <span class="d-stg-lbl" data-i18n="cd_rem_lbl">Sisa Kartu:</span>
-              <div class="d-cnt" id="cdRemaining" style="background:var(--acc);color:#fff;border-color:var(--acc);min-width:40px;text-align:center;">52</div>
+              <div class="d-cnt" id="cdRemaining" style="background:var(--acc);color:#fff;border-color:var(--acc);min-width:48px;text-align:center;font-weight:800;box-shadow:0 2px 8px rgba(255,179,0,0.3);">52</div>
             </div>
             
-            <div class="d-type-row" style="flex-wrap:wrap;gap:8px;margin-bottom:12px;">
-              <button class="btn btn-g" id="cdModeBtn" onclick="toggleCardMode()" style="flex:1;padding:8px;font-size:0.8rem;background:transparent;border:1px solid var(--glass-border);color:var(--t2);">
-                <i data-lucide="layers" style="width:14px"></i> Pakai Tumpukan
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px;">
+              <button class="sp-preset-btn" id="cdModeBtn" onclick="toggleCardMode()" style="justify-content:center; padding:10px 8px;" data-i18n="cd_mode_stk">
+                <i data-lucide="layers" style="width:14px; margin-right:4px;"></i> Pakai Tumpukan
               </button>
-              <button class="btn btn-g" id="cdJokerBtn" onclick="toggleCardJoker()" style="flex:1;padding:8px;font-size:0.8rem;background:transparent;border:1px solid var(--glass-border);color:var(--t2);">
-                <span>🃏</span> Joker: Nonaktif
+              <button class="sp-preset-btn" id="cdJokerBtn" onclick="toggleCardJoker()" style="justify-content:center; padding:10px 8px;" data-i18n="cd_joker_off">
+                <span style="margin-right:4px;">🃏</span> Joker: Nonaktif
               </button>
             </div>
             
-            <button class="btn btn-g" onclick="reshuffleCards()" style="width:100%;justify-content:center;margin-bottom:16px;">
-              <i data-lucide="shuffle"></i> Kocok Ulang (Reshuffle)
+            <button class="sp-preset-btn" onclick="reshuffleCards()" style="width:100%; justify-content:center; margin-bottom:16px; background:var(--bg4); border:1px solid var(--bdr-a); color:var(--t1);">
+              <i data-lucide="shuffle" style="width:14px; margin-right:4px;"></i> <span data-i18n="cd_reshuffle_btn">Kocok Ulang (Reshuffle)</span>
             </button>
             
             <div class="sep"></div>

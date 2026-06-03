@@ -198,3 +198,8 @@ function flipCoin(){
   }, 1500 + (_cCount * 60)); // Wait for all animations to finish
 }
 
+
+function clearCHist() {
+  $('cHist').innerHTML = '<span style="color:var(--t3)">—</span>';
+  if (typeof playTick === 'function') playTick();
+}

@@ -244,8 +244,11 @@
               <button class="d-type-btn" onclick="setSpColor('crystal',this)"><i data-lucide="gem" style="color:#E0FFFF; width:14px; margin-right:4px;"></i> Crystal</button>
             </div>
             <div class="sep"></div>
-            <!-- History -->
-            <div class="lbl" data-i18n="sp_hist_lbl">Riwayat</div>
+                        <!-- History -->
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <div class="lbl" data-i18n="sp_hist_lbl" style="margin:0;">Riwayat</div>
+              <button class="sp-stat-reset" onclick="clearSpHist()"><i data-lucide="rotate-ccw" style="width:12px;height:12px"></i> <span data-i18n="sp_reset">Reset</span></button>
+            </div>
             <div class="sp-hist-wrap" id="spHist">
               <span style="color:var(--t3)">—</span>
             </div>
@@ -349,8 +352,11 @@
 
             <div class="sep"></div>
             
-            <!-- History -->
-            <div class="lbl" data-i18n="sp_hist_lbl">Riwayat</div>
+                        <!-- History -->
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <div class="lbl" data-i18n="sp_hist_lbl" style="margin:0;">Riwayat</div>
+              <button class="sp-stat-reset" onclick="clearDHist()"><i data-lucide="rotate-ccw" style="width:12px;height:12px"></i> <span data-i18n="sp_reset">Reset</span></button>
+            </div>
             <div class="sp-hist-wrap" id="dHist">
               <span style="color:var(--t3)">—</span>
             </div>
@@ -434,8 +440,11 @@
 
             <div class="sep"></div>
             
-            <!-- History -->
-            <div class="lbl" data-i18n="cn_hist_lbl">Riwayat Koin</div>
+                        <!-- History -->
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <div class="lbl" data-i18n="cn_hist_lbl" style="margin:0;">Riwayat Koin</div>
+              <button class="sp-stat-reset" onclick="clearCHist()"><i data-lucide="rotate-ccw" style="width:12px;height:12px"></i> <span data-i18n="sp_reset">Reset</span></button>
+            </div>
             <div class="sp-hist-wrap" id="cHist" style="max-height:150px;overflow-y:auto;align-items:flex-start;align-content:flex-start">
               <span style="color:var(--t3)">—</span>
             </div>
@@ -501,7 +510,7 @@
             <!-- History -->
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
               <div class="lbl" data-i18n="sp_hist_lbl" style="margin:0;">Riwayat</div>
-              <button class="sp-btn" onclick="clearCdHist()" data-i18n="sp_reset" style="background:transparent;color:var(--rose);padding:4px;font-size:0.75rem;"><i data-lucide="trash-2" style="width:14px;margin:0;"></i></button>
+              <button class="sp-stat-reset" onclick="clearCdHist()"><i data-lucide="rotate-ccw" style="width:12px;height:12px"></i> <span data-i18n="sp_reset">Reset</span></button>
             </div>
             <div class="sp-hist-wrap" id="cdHist" style="min-height:100px;">
               <span style="color:var(--t3)">—</span>
@@ -607,7 +616,7 @@
             
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
               <div class="lbl" style="margin:0">Riwayat</div>
-              <button class="sp-stat-reset" onclick="clearLotoHist()"><i data-lucide="trash-2" style="width:12px"></i> <span data-i18n="lt_clear">Hapus</span></button>
+              <button class="sp-stat-reset" onclick="clearLotoHist()"><i data-lucide="rotate-ccw" style="width:12px;height:12px"></i> <span data-i18n="sp_reset">Reset</span></button>
             </div>
             <div class="loto-hist" id="lotoHist" style="max-height:160px;overflow-y:auto;"></div>
           </div>
@@ -739,7 +748,7 @@
             
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
               <div class="lbl" style="margin:0" data-i18n="bg_hist_lbl">Riwayat Terakhir</div>
-              <button class="sp-stat-reset" onclick="clearPwHist()"><i data-lucide="trash-2" style="width:12px"></i> <span data-i18n="lt_clear">Hapus</span></button>
+              <button class="sp-stat-reset" onclick="clearPwHist()"><i data-lucide="rotate-ccw" style="width:12px;height:12px"></i> <span data-i18n="sp_reset">Reset</span></button>
             </div>
             <div class="pw-hist" id="pwHist" style="display:flex; flex-direction:column; gap:8px; max-height:160px; overflow-y:auto;">
               <div style="color:var(--t3); font-size:0.75rem; text-align:center; padding:12px 0;"><span data-i18n="pw_no_hist">Belum ada riwayat</span></div>

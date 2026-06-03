@@ -877,3 +877,8 @@ function initSpinner() {
   };
   window.addEventListener('resize', _spResizeHandler);
 }
+
+function clearSpHist() {
+  $('spHist').innerHTML = '<span style="color:var(--t3)">—</span>';
+  if (typeof playTick === 'function') playTick();
+}

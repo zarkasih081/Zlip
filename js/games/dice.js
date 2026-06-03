@@ -304,3 +304,8 @@ if(document.readyState === 'loading') {
   updateIdleDice();
   renderDiceStats();
 }
+
+function clearDHist() {
+  $('dHist').innerHTML = '<span style="color:var(--t3)">—</span>';
+  if (typeof playTick === 'function') playTick();
+}

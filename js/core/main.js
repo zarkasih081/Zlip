@@ -114,6 +114,7 @@ function renderFavorites() {
     'sp': { icon: 'pie-chart', name: t('nav_sp'), color: 'var(--acc)' },
     'dc': { icon: 'dice-5', name: t('nav_dc'), color: 'var(--violet)' },
     'cn': { icon: 'coins', name: t('nav_cn'), color: 'var(--acc)' },
+    'cd': { icon: 'layers', name: t('nav_cd'), color: 'var(--rose)' },
     'bg': { icon: 'grid-3x3', name: t('nav_bg'), color: 'var(--sky)' },
     'lt': { icon: 'ticket', name: t('nav_lt'), color: 'var(--cyan)' },
     'tm': { icon: 'timer', name: t('nav_tm'), color: 'var(--grn)' },

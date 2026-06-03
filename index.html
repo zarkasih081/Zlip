@@ -479,7 +479,7 @@
                 <i data-lucide="layers" style="width:14px;"></i> Pakai Tumpukan
               </button>
               <button class="sp-preset-btn" id="cdJokerBtn" onclick="toggleCardJoker()" style="display:flex; align-items:center; justify-content:center; gap:6px; padding:10px 8px; font-family:inherit; font-size:0.8rem;" data-i18n="cd_joker_off">
-                <span style="line-height:1; transform:translateY(-1px);">🃏</span> Joker: Nonaktif
+                <i data-lucide="venetian-mask" style="width:14px;"></i> Joker: Nonaktif
               </button>
             </div>
             
@@ -499,7 +499,10 @@
             <div class="sep"></div>
             
             <!-- History -->
-            <div class="lbl" data-i18n="sp_hist_lbl">Riwayat</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <div class="lbl" data-i18n="sp_hist_lbl" style="margin:0;">Riwayat</div>
+              <button class="sp-btn" onclick="clearCdHist()" data-i18n="sp_reset" style="background:transparent;color:var(--rose);padding:4px;font-size:0.75rem;"><i data-lucide="trash-2" style="width:14px;margin:0;"></i></button>
+            </div>
             <div class="sp-hist-wrap" id="cdHist" style="min-height:100px;">
               <span style="color:var(--t3)">—</span>
             </div>

@@ -24,8 +24,8 @@ function initCardDeck() {
     }
   }
   if (_cardIncludeJoker) {
-    _cardDeck.push({ suit: {s: '🃏', c: 'card-black', n_key: 'cd_joker_black'}, val: 'JOKER', type: 'joker' });
-    _cardDeck.push({ suit: {s: '🃏', c: 'card-red', n_key: 'cd_joker_red'}, val: 'JOKER', type: 'joker' });
+    _cardDeck.push({ suit: {s: '<i data-lucide="venetian-mask" style="width:1em;height:1em;vertical-align:-0.125em;"></i>', c: 'card-black', n_key: 'cd_joker_black'}, val: 'JOKER', type: 'joker' });
+    _cardDeck.push({ suit: {s: '<i data-lucide="venetian-mask" style="width:1em;height:1em;vertical-align:-0.125em;"></i>', c: 'card-red', n_key: 'cd_joker_red'}, val: 'JOKER', type: 'joker' });
   }
   shuffleArray(_cardDeck);
   _cardsRemaining = _cardDeck.length;
@@ -160,6 +160,7 @@ function drawCard() {
       `;
     }
     
+    if(window.lucide) lucide.createIcons({ root: topCard });
     topCard.classList.add('flipped');
     
     setTimeout(() => {
@@ -182,8 +183,9 @@ function drawCard() {
       chip.style.padding = '4px 12px';
       
       let iconColor = drawn.suit.c === 'card-red' ? 'var(--rose)' : 'var(--t1)';
-      chip.innerHTML = `<span style="color:${iconColor};font-size:1.1rem;margin-right:4px">${drawn.suit.s}</span> <strong>${drawn.val}</strong>`;
+      chip.innerHTML = `<span style="color:${iconColor};font-size:1.1rem;margin-right:4px;display:inline-flex;align-items:center;">${drawn.suit.s}</span> <strong>${drawn.val}</strong>`;
       histWrap.prepend(chip);
+      if(window.lucide) lucide.createIcons({ root: chip });
       if(histWrap.children.length > 20) histWrap.removeChild(histWrap.lastChild);
       
       addGlobalHistory(t('nav_cd'), cardName);
@@ -197,6 +199,14 @@ function drawCard() {
         }, 500);
       }, 1000); // Keep it visible before throwing away
     }, 600); // Wait for flip to complete
+  }
+}
+
+function clearCdHist() {
+  const histWrap = $('cdHist');
+  if (histWrap) {
+    histWrap.innerHTML = '<span style="color:var(--t3)">—</span>';
+    if (typeof playTick === 'function') playTick();
   }
 }
 

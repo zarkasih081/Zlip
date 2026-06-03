@@ -398,7 +398,7 @@ const I18N = {
 
     // Cards
     "nav_cd": "Kartu",
-    "cd_title": "Tarik Kartu",
+    "cd_title": "<i data-lucide=\"layers\"></i> <span>Tarik</span> Kartu",
     "cd_desc": "Tarik kartu secara acak dari tumpukan. Cocok untuk menentukan pembagian atau giliran!",
     "cd_stg_lbl": "Pengaturan Dek",
     "cd_rem_lbl": "Sisa Kartu:",

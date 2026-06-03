@@ -29,7 +29,7 @@ function setStore(k, v) {
 
 const GlobalState = {
   lang: getStore('lang', 'id'),
-  theme: getStore('theme', 'dark'),
+  theme: getStore('theme', 'light'),
   sound: getStore('sound', true),
   animations: getStore('animations', true),
   favorites: getStore('favorites', ['sp', 'dc', 'cn', 'tm']),

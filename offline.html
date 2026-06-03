@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Zlip Sedang Offline</title>
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/layout.css">
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#FFB300">
+  <style>
+    .offline-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 2rem;
+      background-color: var(--bg);
+      color: var(--tx);
+    }
+    .offline-logo {
+      width: 150px;
+      height: auto;
+      margin-bottom: 2rem;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+    }
+    .offline-title {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      color: var(--pri);
+    }
+    .offline-desc {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+      opacity: 0.8;
+      max-width: 400px;
+      line-height: 1.5;
+    }
+    .offline-btn {
+      padding: 0.8rem 1.5rem;
+      font-size: 1.1rem;
+      background-color: var(--pri);
+      color: var(--bg);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: opacity 0.2s;
+    }
+    .offline-btn:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <div class="offline-container">
+    <img src="./assets/images/logo.webp" alt="Zlip Logo" class="offline-logo">
+    <h1 class="offline-title">Zlip sedang offline</h1>
+    <p class="offline-desc">Beberapa fitur tetap bisa digunakan jika sudah pernah dibuka sebelumnya.</p>
+    <button class="offline-btn" onclick="window.location.reload()">Coba Lagi</button>
+  </div>
+</body>
+</html>

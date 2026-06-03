@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Zlip — Multi Randomizer: Roda Acak, Dadu, Koin, Gacha, Bingo, dan alat acak interaktif.">
+  
+  <!-- Open Graph / Social Media -->
+  <meta property="og:title" content="Zlip — Multi Randomizer">
+  <meta property="og:description" content="Aplikasi acak serbaguna: Roda Acak, Dadu, Koin, Gacha, Bingo, dan alat acak interaktif lainnya.">
+  <meta property="og:image" content="https://zlip-randomizer.netlify.app/assets/icons/icon-512.png">
+  <meta property="og:url" content="https://zlip-randomizer.netlify.app/">
+  <meta property="og:type" content="website">
+  
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Zlip — Multi Randomizer">
+  <meta name="twitter:description" content="Roda Acak, Dadu, Koin, Gacha, Bingo, dan alat acak interaktif.">
+  <meta name="twitter:image" content="https://zlip-randomizer.netlify.app/assets/icons/icon-512.png">
+  
+  <!-- PWA Setup -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#FFB300">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  
+  <!-- Icons -->
+  <link rel="icon" href="assets/icons/favicon.ico">
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+
+  <title>Zlip — Multi Randomizer</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/games.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  
+  <script src="js/vendor/lucide.min.js" defer></script>
+</head>
+
+<body>
+
+  <!-- Screen Reader Announcer -->
+  <div id="a11y-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <canvas id="ambientBg"></canvas>
+
+  <!-- Gradient defs for timer -->
+  <svg style="position:absolute;width:0;height:0">
+    <defs>
+      <linearGradient id="timerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#FFB300" />
+        <stop offset="100%" stop-color="#FFD54F" />
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <div class="toast" id="toast"></div>
+
+  <div class="app">
+
+    <!-- ══════════════════════════════════════
+     SIDEBAR / BOTTOM NAVIGATION
+══════════════════════════════════════ -->
+    <aside class="sb">
+      <nav class="sb-nav">
+        <!-- 4 Utama -->
+        <button class="sb-i on" data-page="home" onclick="go('home')" title="Beranda" data-i18n-title="nav_home">
+          <i data-lucide="home" class="ic"></i><span data-i18n="nav_home">Home</span>
+        </button>
+        <button class="sb-i" data-page="sp" onclick="go('sp')" title="Roda Acak" data-i18n-title="nav_sp">
+          <i data-lucide="pie-chart" class="ic"></i><span data-i18n="nav_sp">Roda</span>
+        </button>
+        <button class="sb-i" data-page="dc" onclick="go('dc')" title="Dadu" data-i18n-title="nav_dc">
+          <i data-lucide="dice-5" class="ic"></i><span data-i18n="nav_dc">Dadu</span>
+        </button>
+        <button class="sb-i" data-page="cn" onclick="go('cn')" title="Koin" data-i18n-title="nav_cn">
+          <i data-lucide="coins" class="ic"></i><span data-i18n="nav_cn">Koin</span>
+        </button>
+        
+        <!-- Sisanya di Desktop, tapi disembunyikan di Mobile -->
+        <button class="sb-i hide-mobile" data-page="bg" onclick="go('bg')" title="Bingo" data-i18n-title="nav_bg">
+          <i data-lucide="grid-3x3" class="ic"></i><span data-i18n="nav_bg">Bingo</span>
+        </button>
+        <button class="sb-i hide-mobile" data-page="lt" onclick="go('lt')" title="Lotere" data-i18n-title="nav_lt">
+          <i data-lucide="ticket" class="ic"></i><span data-i18n="nav_lt">Lotere</span>
+        </button>
+        <button class="sb-i hide-mobile" data-page="tm" onclick="go('tm')" title="Timer" data-i18n-title="nav_tm">
+          <i data-lucide="timer" class="ic"></i><span data-i18n="nav_tm">Timer</span>
+        </button>
+        <button class="sb-i hide-mobile" data-page="tg" onclick="go('tg')" title="Bagi Tim" data-i18n-title="nav_tg">
+          <i data-lucide="users" class="ic"></i><span data-i18n="nav_tg">Tim</span>
+        </button>
+        <button class="sb-i hide-mobile" data-page="cd" onclick="go('cd')" title="Kartu" data-i18n-title="nav_cd">
+          <i data-lucide="layers" class="ic"></i><span data-i18n="nav_cd">Kartu</span>
+        </button>
+        <button class="sb-i hide-mobile" data-page="pw" onclick="go('pw')" title="Pembuat Sandi" data-i18n-title="nav_pw">
+          <i data-lucide="key" class="ic"></i><span data-i18n="nav_pw">Sandi</span>
+        </button>
+        <button class="sb-i hide-mobile" data-page="settings" onclick="go('settings')" title="Pengaturan" data-i18n-title="nav_set">
+          <i data-lucide="settings" class="ic"></i><span data-i18n="nav_set">Set</span>
+        </button>
+        <button class="sb-i hide-mobile" data-page="dn" onclick="go('dn')" title="Donasi" data-i18n-title="nav_dn">
+          <i data-lucide="heart" class="ic"></i><span data-i18n="nav_dn">Donasi</span>
+        </button>
+        
+        <!-- Tombol Menu (hanya di Mobile) -->
+        <button class="sb-i show-mobile-only" onclick="toggleMobileMenu()" title="Menu">
+          <i data-lucide="menu" class="ic"></i><span>Menu</span>
+        </button>
+      </nav>
+    </aside>
+    
+    <!-- Drawer Menu Mobile -->
+    <div id="mobileDrawer" class="mobile-drawer" onclick="if(event.target === this) toggleMobileMenu()">
+      <div class="mobile-drawer-content" onclick="event.stopPropagation()">
+        <div class="drawer-pill"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+          <h3 style="font-size:1.3rem;font-weight:900;color:var(--t1);letter-spacing:-0.5px;">Menu Lainnya</h3>
+          <button aria-label="Tutup Menu" onclick="toggleMobileMenu()" style="background:var(--bg3);border:0;color:var(--t2);cursor:pointer;width:36px;height:36px;border-radius:18px;display:flex;align-items:center;justify-content:center;transition:background 0.2s;"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+        </div>
+        <div class="drawer-grid">
+          <button class="drawer-i" onclick="go('bg'); toggleMobileMenu()">
+            <i data-lucide="grid-3x3"></i> <span data-i18n="nav_bg">Bingo</span>
+          </button>
+          <button class="drawer-i" onclick="go('lt'); toggleMobileMenu()">
+            <i data-lucide="ticket"></i> <span data-i18n="nav_lt">Lotere</span>
+          </button>
+          <button class="drawer-i" onclick="go('tm'); toggleMobileMenu()">
+            <i data-lucide="timer"></i> <span data-i18n="nav_tm">Timer</span>
+          </button>
+          <button class="drawer-i" onclick="go('tg'); toggleMobileMenu()">
+            <i data-lucide="users"></i> <span data-i18n="nav_tg">Tim</span>
+          </button>
+          <button class="drawer-i" onclick="go('cd'); toggleMobileMenu()">
+            <i data-lucide="layers"></i> <span data-i18n="nav_cd">Kartu</span>
+          </button>
+          <button class="drawer-i" onclick="go('pw'); toggleMobileMenu()">
+            <i data-lucide="key"></i> <span data-i18n="nav_pw">Sandi</span>
+          </button>
+          <button class="drawer-i" onclick="go('settings'); toggleMobileMenu()">
+            <i data-lucide="settings"></i> <span data-i18n="nav_set">Set</span>
+          </button>
+          <button class="drawer-i" onclick="go('dn'); toggleMobileMenu()">
+            <i data-lucide="heart"></i> <span data-i18n="nav_dn">Donasi</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+     MAIN CONTENT
+══════════════════════════════════════ -->
+    <main class="mn">
+
+      <div id="p-home" class="pn on">
+        <div class="home-hero">
+          <img src="assets/images/logo.webp" alt="Zlip Logo" class="home-logo-img">
+          <h1 data-i18n="home_title">Selamat datang di <span>Zlip</span></h1>
+          <p data-i18n="home_desc">Aplikasi acak serbaguna yang cepat, mudah digunakan, dan interaktif.</p>
+          <button class="btn btn-g" onclick="go('sp')" style="margin-top:16px">
+            <span data-i18n="home_start">Mulai Sekarang</span> <i data-lucide="arrow-right"></i>
+          </button>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="lbl" style="text-align: center;" data-i18n="home_features">Fitur</div>
+        <div class="home-fav-grid" id="homeFavorites">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Donation Card (Home) -->
+        <div class="home-dn-card">
+          <div>
+            <h3 style="font-size:1.1rem;font-weight:800;color:var(--acc);margin-bottom:4px;" data-i18n="dn_home_title">Dukung Pengembangan Zlip</h3>
+            <p style="font-size:0.8rem;color:var(--t2);" data-i18n="dn_home_desc">Bantu Zlip tetap gratis dan terus berkembang.</p>
+          </div>
+          <button class="btn btn-g" onclick="go('dn')">
+            <i data-lucide="heart" style="width:16px;height:16px"></i> <span data-i18n="dn_home_btn">Donasi</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── 1. SPINNER ── -->
+      <div id="p-sp" class="pn">
+        <div class="hd">
+          <h1 data-i18n="sp_title"><i data-lucide="pie-chart"></i> <span>Roda</span> Acak</h1>
+          <p data-i18n="sp_desc">Tarik rodanya secara langsung (drag) atau cukup tekan tombol putar!</p>
+        </div>
+        <div class="sp-lay">
+          <div class="sp-c">
+            <div class="sp-wrap">
+              <div class="sp-ptr">▼</div>
+              <canvas id="spCv" width="320" height="320"></canvas>
+            </div>
+            <div class="sp-action-row">
+              <button class="btn btn-g" id="spBtn" onclick="spin()"><span data-i18n="sp_spin_btn"><i data-lucide="zap" style="width:18px"></i> Putar</span></button>
+              <button class="btn btn-sm" id="elimToggle" onclick="toggleElimMode()" style="background:var(--glass);color:var(--t2);border:1px solid var(--glass-border)"><span id="elimToggleText" data-i18n="sp_elim_off"><i data-lucide="minus-circle" style="width:16px"></i> Eliminasi: Nonaktif</span></button>
+            </div>
+            <div class="rc" id="spR"><span data-i18n="sp_ready">Siap diputar!</span></div>
+          </div>
+          <div class="sp-side card">
+            <!-- Presets -->
+            <div class="lbl" data-i18n="sp_preset_lbl">Preset Cepat</div>
+            <div class="sp-preset-row">
+              <button class="sp-preset-btn" onclick="loadSpPreset('food')"><span data-i18n="sp_pre_food"><i data-lucide="pizza" style="width:14px; margin-right:4px"></i> Makanan</span></button>
+              <button class="sp-preset-btn" onclick="loadSpPreset('yesno')"><span data-i18n="sp_pre_yesno"><i data-lucide="check-circle-2" style="width:14px; margin-right:4px"></i> Ya/Tidak</span></button>
+              <button class="sp-preset-btn" onclick="loadSpPreset('number')"><span data-i18n="sp_pre_num"><i data-lucide="hash" style="width:14px; margin-right:4px"></i> 1-10</span></button>
+              <button class="sp-preset-btn" onclick="loadSpPreset('color')"><span data-i18n="sp_pre_color"><i data-lucide="palette" style="width:14px; margin-right:4px"></i> Warna</span></button>
+              <button class="sp-preset-btn" onclick="loadSpPreset('day')"><span data-i18n="sp_pre_day"><i data-lucide="calendar-days" style="width:14px; margin-right:4px"></i> Hari</span></button>
+            </div>
+            <div class="sep"></div>
+            <!-- Item Editor -->
+            <div class="lbl" data-i18n="sp_item_lbl">Daftar Item</div>
+            <div class="sp-editor">
+              <div id="spList" class="sp-list"></div>
+              <div class="sp-add-row">
+                <input type="text" id="spNewInp" class="inp" placeholder="Tambah item..." data-i18n-placeholder="sp_inp_add" onkeydown="if(event.key==='Enter') addSpItem()" onpaste="handleSpPaste(event)">
+                <button aria-label="Tambah item" class="btn btn-g" onclick="addSpItem()" style="padding: 10px; width: 42px;"><i data-lucide="plus"></i></button>
+              </div>
+            </div>
+            <div class="sep"></div>
+            <!-- Color Themes -->
+            <div class="lbl" data-i18n="sp_color_lbl">Tema Warna</div>
+            <div class="d-type-row" id="spColorRow" style="flex-wrap:wrap;gap:6px">
+              <button class="d-type-btn on" onclick="setSpColor('rainbow',this)"><span style="color:#ef4444">●</span> Rainbow</button>
+              <button class="d-type-btn" onclick="setSpColor('warm',this)"><span style="color:#f97316">●</span> Warm</button>
+              <button class="d-type-btn" onclick="setSpColor('cool',this)"><span style="color:#3b82f6">●</span> Cool</button>
+              <button class="d-type-btn" onclick="setSpColor('neon',this)"><span style="color:#ff006e">●</span> Neon</button>
+              <button class="d-type-btn" onclick="setSpColor('pastel',this)"><span style="color:#fca5a5">●</span> Pastel</button>
+              <button class="d-type-btn" onclick="setSpColor('mono',this)"><span style="color:#555">●</span> Mono</button>
+              <!-- Tema Eksklusif -->
+              <button class="d-type-btn" onclick="setSpColor('gold',this)"><i data-lucide="sparkles" style="color:#FFB300; width:14px; margin-right:4px;"></i> Gold Premium</button>
+              <button class="d-type-btn" onclick="setSpColor('dark',this)"><i data-lucide="moon" style="color:#666; width:14px; margin-right:4px;"></i> Dark Elegant</button>
+              <button class="d-type-btn" onclick="setSpColor('crystal',this)"><i data-lucide="gem" style="color:#E0FFFF; width:14px; margin-right:4px;"></i> Crystal</button>
+            </div>
+            <div class="sep"></div>
+            <!-- History -->
+            <div class="lbl" data-i18n="sp_hist_lbl">Riwayat</div>
+            <div class="sp-hist-wrap" id="spHist">
+              <span style="color:var(--t3)">—</span>
+            </div>
+            <div class="sep"></div>
+            <!-- Statistics -->
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div class="lbl" style="margin:0" data-i18n="sp_stat_lbl">Statistik</div>
+              <button class="sp-stat-reset" onclick="resetSpStats()"><i data-lucide="rotate-ccw" style="width:12px;height:12px"></i> <span data-i18n="sp_reset">Reset</span></button>
+            </div>
+            <div id="spStatsContainer" class="sp-stats-container"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 2. DADU ── -->
+      <div id="p-dc" class="pn">
+        <div class="hd">
+          <h1 data-i18n="dc_title"><i data-lucide="dice-5"></i> <span>Dadu</span> 3D</h1>
+          <p data-i18n="dc_desc">Pilih jenis dan jumlah dadu, tambah modifier, lalu lempar untuk hasil bergaya RPG!</p>
+        </div>
+        <div class="sp-lay">
+          <div class="sp-c">
+            <!-- Dice Tray Arena -->
+            <div class="d-tray" id="dS">
+              <!-- Dadu 3D akan dimunculkan di sini -->
+            </div>
+            
+            <button class="btn btn-r" id="dB" onclick="roll()"><span data-i18n="dc_btn"><i data-lucide="dices" style="width:18px"></i> Lempar Dadu</span></button>
+            <div class="rc" id="dR" style="min-height:70px;display:flex;align-items:center;justify-content:center;padding:12px;text-align:center;">
+              <span data-i18n="dc_ready"><span data-i18n="cn_ready">Tekan Lempar</span></span>
+            </div>
+          </div>
+          
+          <div class="sp-side card">
+            <!-- Dice Configuration -->
+            <div class="lbl" data-i18n="dc_stg_lbl">Pengaturan Dadu</div>
+            <div class="d-stg-row">
+              <span class="d-stg-lbl" data-i18n="dc_qty">Jumlah:</span>
+              <div class="d-stepper">
+                <button class="d-cnt-btn" onclick="adjDice(-1)">−</button>
+                <div class="d-cnt" id="dCount">2</div>
+                <button class="d-cnt-btn" onclick="adjDice(1)">+</button>
+              </div>
+            </div>
+            
+            <div class="d-stg-row" style="margin-top:10px;">
+              <span class="d-stg-lbl">Tema:</span>
+              <div class="d-type-row" id="diceThemeRow" style="flex-wrap:wrap;gap:6px">
+                <button class="d-type-btn on" onclick="setDTheme('default',this)"><i data-lucide="box" style="width:14px; margin-right:4px;"></i> Standard</button>
+                <button class="d-type-btn" onclick="setDTheme('gold',this)"><i data-lucide="sparkles" style="color:#FFB300; width:14px; margin-right:4px;"></i> Gold</button>
+                <button class="d-type-btn" onclick="setDTheme('neon',this)"><i data-lucide="zap" style="color:#ff006e; width:14px; margin-right:4px;"></i> Neon</button>
+                <button class="d-type-btn" onclick="setDTheme('dark',this)"><i data-lucide="moon" style="color:#666; width:14px; margin-right:4px;"></i> Dark</button>
+              </div>
+            </div>
+            
+            <div class="d-stg-row" style="margin-top:10px;">
+              <span class="d-stg-lbl" data-i18n="dc_type">Jenis:</span>
+              <div class="d-type-row" style="flex-wrap:wrap;gap:6px">
+                <button class="d-type-btn on" onclick="setDType(6,this)">D6</button>
+                <button class="d-type-btn" onclick="setDType(4,this)">D4</button>
+                <button class="d-type-btn" onclick="setDType(8,this)">D8</button>
+                <button class="d-type-btn" onclick="setDType(10,this)">D10</button>
+                <button class="d-type-btn" onclick="setDType(12,this)">D12</button>
+                <button class="d-type-btn" onclick="setDType(20,this)">D20</button>
+                <button class="d-type-btn" onclick="setDType(100,this)">D100</button>
+              </div>
+            </div>
+            
+            <div class="sep"></div>
+            
+            <!-- RPG Features -->
+            <div class="lbl" data-i18n="dc_adv_lbl">Fitur Lanjutan (RPG)</div>
+            <div class="d-stg-row">
+              <span class="d-stg-lbl" data-i18n="dc_mod">Modifier:</span>
+              <div class="d-stepper">
+                <button class="d-cnt-btn" onclick="adjMod(-1)">−</button>
+                <div class="d-cnt" id="dMod" style="min-width:32px;">+0</div>
+                <button class="d-cnt-btn" onclick="adjMod(1)">+</button>
+              </div>
+            </div>
+            
+            <div class="d-stg-row" style="margin-top:10px;">
+              <span class="d-stg-lbl" data-i18n="dc_cond">Kondisi:</span>
+              <select id="dCond" class="inp" style="flex:1;cursor:pointer">
+                <option value="normal" data-i18n="dc_cond_norm">Normal</option>
+                <option value="adv" data-i18n="dc_cond_adv">Advantage (Ambil Tertinggi)</option>
+                <option value="dis" data-i18n="dc_cond_dis">Disadvantage (Ambil Terendah)</option>
+              </select>
+            </div>
+            
+            <div class="sep"></div>
+            
+            <!-- Presets -->
+            <div class="lbl" data-i18n="sp_preset_lbl">Preset Cepat</div>
+            <div class="sp-preset-row">
+              <button class="sp-preset-btn" onclick="loadDPreset(1, 20, 0, 'normal')">D&D Check (1D20)</button>
+              <button class="sp-preset-btn" onclick="loadDPreset(2, 6, 0, 'normal')">Monopoli (2D6)</button>
+              <button class="sp-preset-btn" onclick="loadDPreset(8, 6, 0, 'normal')">Fireball (8D6)</button>
+              <button class="sp-preset-btn" onclick="loadDPreset(2, 20, 0, 'adv')">D20 Advantage</button>
+            </div>
+
+            <div class="sep"></div>
+            
+            <!-- History -->
+            <div class="lbl" data-i18n="sp_hist_lbl">Riwayat</div>
+            <div class="sp-hist-wrap" id="dHist">
+              <span style="color:var(--t3)">—</span>
+            </div>
+            
+            <div class="sep"></div>
+            
+            <!-- Statistics -->
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div class="lbl" style="margin:0" data-i18n="sp_stat_lbl">Statistik</div>
+              <button class="sp-stat-reset" onclick="resetDiceStats()"><i data-lucide="rotate-ccw" style="width:12px;height:12px"></i> <span data-i18n="sp_reset">Reset</span></button>
+            </div>
+            <div id="dStatsContainer" class="sp-stats-container"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 3. KOIN ── -->
+      <div id="p-cn" class="pn">
+        <div class="hd">
+          <h1 data-i18n="cn_title"><i data-lucide="coins"></i> <span>Koin</span> 3D</h1>
+          <p data-i18n="cn_desc">Lempar hingga 10 koin sekaligus dengan efek fisika 3D yang nyata!</p>
+        </div>
+        <div class="sp-lay">
+          <div class="sp-c">
+            <!-- Coin Tray Arena -->
+            <div class="d-tray" id="cS">
+              <!-- Koin 3D akan dimunculkan di sini -->
+            </div>
+            
+            <button class="btn btn-p" id="cB" onclick="flipCoin()"><span data-i18n="cn_btn"><i data-lucide="circle-dot" style="width:18px"></i> Lempar Koin</span></button>
+            <div class="rc" id="cR" style="min-height:70px;display:flex;align-items:center;justify-content:center;padding:12px;text-align:center;">
+              <span data-i18n="dc_ready"><span data-i18n="cn_ready">Tekan Lempar</span></span>
+            </div>
+          </div>
+          
+          <div class="sp-side card">
+            <!-- Coin Configuration -->
+            <div class="lbl" data-i18n="cn_stg_lbl">Pengaturan Koin</div>
+            <div class="d-stg-row">
+              <span class="d-stg-lbl" data-i18n="dc_qty">Jumlah:</span>
+              <div class="d-stepper">
+                <button class="d-cnt-btn" onclick="adjCoinCount(-1)">−</button>
+                <div class="d-cnt" id="cCount">1</div>
+                <button class="d-cnt-btn" onclick="adjCoinCount(1)">+</button>
+              </div>
+            </div>
+            
+
+            <div class="d-stg-row" style="margin-top:12px;">
+              <span class="d-stg-lbl" data-i18n="cn_theme_lbl">Tema:</span>
+              <div class="d-type-row" style="flex:1">
+                <button class="d-type-btn on" onclick="setCoinTheme('gold',this)"><i data-lucide="sparkles" style="color:#FFB300; width:14px; margin-right:4px;"></i> <span data-i18n="cn_th_gold">Emas</span></button>
+                <button class="d-type-btn" onclick="setCoinTheme('silver',this)"><i data-lucide="award" style="color:#CBD5E1; width:14px; margin-right:4px;"></i> <span data-i18n="cn_th_silver">Perak</span></button>
+                <button class="d-type-btn" onclick="setCoinTheme('bronze',this)"><i data-lucide="medal" style="color:#EA580C; width:14px; margin-right:4px;"></i> <span data-i18n="cn_th_bronze">Perunggu</span></button>
+              </div>
+            </div>
+            
+            <div class="sep"></div>
+            
+            <!-- Overall Stats -->
+            <div class="lbl" data-i18n="cn_stat_lbl">Statistik Sesi</div>
+            <div class="sp-stats-container" style="margin-top:0">
+              <div class="sp-stat-row">
+                <div class="sp-stat-name" data-i18n="cn_head">Gambar</div>
+                <div class="sp-stat-bar-wrap">
+                  <div class="sp-stat-bar" id="cStatHBar" style="width:0%;background:var(--acc)"></div>
+                </div>
+                <div class="sp-stat-count" id="cStatH">0</div>
+              </div>
+              <div class="sp-stat-row">
+                <div class="sp-stat-name" data-i18n="cn_tail">Angka</div>
+                <div class="sp-stat-bar-wrap">
+                  <div class="sp-stat-bar" id="cStatTBar" style="width:0%;background:var(--rose)"></div>
+                </div>
+                <div class="sp-stat-count" id="cStatT">0</div>
+              </div>
+              <div style="display:flex;justify-content:flex-end;margin-top:4px">
+                <button class="sp-stat-reset" onclick="resetCoinStats()"><i data-lucide="rotate-ccw" style="width:12px"></i> <span data-i18n="sp_reset">Reset</span></button>
+              </div>
+            </div>
+
+            <div class="sep"></div>
+            
+            <!-- History -->
+            <div class="lbl" data-i18n="cn_hist_lbl">Riwayat Koin</div>
+            <div class="sp-hist-wrap" id="cHist" style="max-height:150px;overflow-y:auto;align-items:flex-start;align-content:flex-start">
+              <span style="color:var(--t3)">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 6. KARTU REMI ── -->
+      <div id="p-cd" class="pn">
+        <div class="hd">
+          <h1 data-i18n="cd_title"><i data-lucide="layers"></i> <span>Tarik</span> Kartu</h1>
+          <p data-i18n="cd_desc">Tarik kartu secara acak dari tumpukan. Cocok untuk menentukan pembagian atau giliran!</p>
+        </div>
+        <div class="sp-lay">
+          <div class="sp-c">
+            <!-- Stage / Arena -->
+            <div class="bt-arena">
+              <div id="cdStage" class="sp-wrap" style="display:flex;align-items:center;justify-content:center;height:100%;padding:20px;">
+                <!-- Cards will be injected here -->
+              </div>
+            </div>
+            
+            <div class="res-box" style="margin-top:20px;text-align:center;">
+              <div id="cdResult" style="min-height:48px;">
+                <div style="font-size:1.2rem;color:var(--t3);font-weight:700">Tarik kartu untuk memulai</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="sp-side card">
+            <!-- Settings -->
+            <div class="lbl" data-i18n="cd_stg_lbl">Pengaturan Dek</div>
+            
+            <div class="d-stg-row" style="margin-bottom:12px;">
+              <span class="d-stg-lbl" data-i18n="cd_rem_lbl">Sisa Kartu:</span>
+              <div class="d-cnt" id="cdRemaining" style="background:var(--acc);color:#fff;border-color:var(--acc);min-width:40px;text-align:center;">52</div>
+            </div>
+            
+            <div class="d-type-row" style="flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+              <button class="btn btn-g" id="cdModeBtn" onclick="toggleCardMode()" style="flex:1;padding:8px;font-size:0.8rem;background:transparent;border:1px solid var(--glass-border);color:var(--t2);">
+                <i data-lucide="layers" style="width:14px"></i> Pakai Tumpukan
+              </button>
+              <button class="btn btn-g" id="cdJokerBtn" onclick="toggleCardJoker()" style="flex:1;padding:8px;font-size:0.8rem;background:transparent;border:1px solid var(--glass-border);color:var(--t2);">
+                <span>🃏</span> Joker: Nonaktif
+              </button>
+            </div>
+            
+            <button class="btn btn-g" onclick="reshuffleCards()" style="width:100%;justify-content:center;margin-bottom:16px;">
+              <i data-lucide="shuffle"></i> Kocok Ulang (Reshuffle)
+            </button>
+            
+            <div class="sep"></div>
+            
+            <div class="lbl" data-i18n="cd_theme_lbl">Desain Belakang Kartu</div>
+            <div class="d-type-row" id="cdThemeRow">
+              <button class="d-type-btn on" onclick="setCardTheme('red',this)"><span style="color:#b91c1c">●</span> Merah</button>
+              <button class="d-type-btn" onclick="setCardTheme('blue',this)"><span style="color:#1d4ed8">●</span> Biru</button>
+              <button class="d-type-btn" onclick="setCardTheme('gold',this)"><span style="color:#d97706">●</span> Emas</button>
+            </div>
+            
+            <div class="sep"></div>
+            
+            <!-- History -->
+            <div class="lbl" data-i18n="sp_hist_lbl">Riwayat</div>
+            <div class="sp-hist-wrap" id="cdHist" style="min-height:100px;">
+              <span style="color:var(--t3)">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 5. BINGO ── -->
+      <div id="p-bg" class="pn">
+        <div class="hd">
+          <h1 data-i18n="bg_title"><i data-lucide="grid-3x3"></i> <span>Bingo</span></h1>
+          <p data-i18n="bg_desc">Acak dan tarik angka Bingo-mu satu per satu untuk bermain.</p>
+        </div>
+        <div class="sp-lay">
+          <div class="sp-c" style="width:100%; min-width:0;">
+            <div class="d-tray" id="bgDrawArea" style="min-height:180px; margin-bottom:12px; position:relative; overflow:hidden;">
+              <div class="bg-ball-tray" id="bgBallTray">
+                <div class="bingo-ball" style="background:var(--bg3); opacity:0.6; filter:grayscale(1); animation:none;">
+                  <div class="bingo-ball-letter" style="color:var(--t3)">?</div>
+                  <div class="bingo-ball-num" style="color:var(--t3)">-</div>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;justify-content:center;margin-bottom:16px;">
+              <button class="btn btn-g" onclick="drawBg()" id="btnDrawBg" style="min-width:140px"><span data-i18n="bg_btn_draw"><i data-lucide="box-select" style="width:18px"></i> Tarik Bola</span></button>
+              <button class="btn btn-p" onclick="toggleAutoDrawBg()" id="btnAutoBg"><span data-i18n="bg_btn_auto"><i data-lucide="bot" style="width:18px"></i> Auto Draw</span></button>
+            </div>
+          </div>
+          
+          <div class="sp-side card" style="min-width:280px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+              <div class="lbl" style="margin:0" data-i18n="bg_brd_lbl">Papan Bingo</div>
+              <div style="display:flex;align-items:center;gap:12px;">
+                <select id="bgMode" class="inp" style="padding:4px 10px;font-size:0.75rem;border-radius:6px;width:auto;height:auto;cursor:pointer" onchange="rstBg(true)">
+                  <option value="75">75 Angka</option>
+                  <option value="90">90 Angka</option>
+                  <option value="30">30 Angka</option>
+                </select>
+                <div style="font-size:.72rem;color:var(--t2);"><span data-i18n="bg_drawn">Ditarik:</span> <strong style="color:var(--acc);font-family:'JetBrains Mono', monospace" id="bgCount">0</strong>/<span id="bgMaxText">75</span></div>
+              </div>
+            </div>
+            <div class="bg-col-labels" id="bgColLabels"></div>
+            <div class="bg-grid" id="bgG"></div>
+            
+            <div class="sep"></div>
+            
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div class="lbl" style="margin:0" data-i18n="bg_hist_lbl">Riwayat Terakhir</div>
+              <button class="sp-stat-reset" onclick="rstBg()"><i data-lucide="rotate-ccw" style="width:12px"></i> <span data-i18n="bg_reset">Reset Papan</span></button>
+            </div>
+            <div class="bg-hist" id="bgHist" style="max-height:150px;overflow-y:auto;align-items:flex-start;align-content:flex-start"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 5. LOTERE ── -->
+      <div id="p-lt" class="pn">
+        <div class="hd">
+          <h1 data-i18n="lt_title"><i data-lucide="ticket"></i> <span>Lotere</span> Acak</h1>
+          <p data-i18n="lt_desc">Buat kombinasi angka lotere acak sesuai dengan rentang yang kamu tentukan.</p>
+        </div>
+        <div class="sp-lay">
+          <div class="sp-c" style="width:100%; min-width:0;">
+            <!-- Lottery Stage / Tube -->
+            <div class="d-tray" id="lotoStage" style="min-height:220px; margin-bottom:12px; position:relative; overflow:hidden; flex-direction:row; align-items:center; padding:20px; gap:16px;">
+              <div id="lotoBalls" style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; width:100%;">
+                <div class="loto-ball" style="background:var(--bg3); opacity:0.8; animation:none; color:var(--t3); font-size:2.5rem; filter:grayscale(1);">?</div>
+                <div class="loto-ball" style="background:var(--bg3); opacity:0.4; animation:none; color:var(--t3); font-size:2.5rem; filter:grayscale(1); transform:scale(0.8);">?</div>
+                <div class="loto-ball" style="background:var(--bg3); opacity:0.15; animation:none; color:var(--t3); font-size:2.5rem; filter:grayscale(1); transform:scale(0.6);">?</div>
+              </div>
+            </div>
+            
+            <div style="display:flex;gap:10px;justify-content:center;margin-bottom:16px;">
+              <button class="btn btn-o" onclick="drawLoto()" id="btnLotoGen" style="min-width:180px"><span data-i18n="lt_btn"><i data-lucide="ticket" style="width:18px"></i> Generate Angka</span></button>
+            </div>
+          </div>
+          
+          <div class="sp-side card" style="min-width:280px;">
+            <div class="lbl" data-i18n="lt_stg_lbl">Pengaturan Lotere</div>
+            
+            <div class="d-stg-row" style="margin-bottom:12px;">
+              <span class="d-stg-lbl" style="min-width:90px;" data-i18n="lt_qty">Jml Angka:</span>
+              <input class="inp" type="number" id="lotoCount" value="6" min="1" max="20" style="flex:1; text-align:center;">
+            </div>
+            <div class="d-stg-row" style="margin-bottom:16px;">
+              <span class="d-stg-lbl" style="min-width:90px;" data-i18n="lt_max">Maksimum:</span>
+              <input class="inp" type="number" id="lotoMax" value="49" min="2" max="999" style="flex:1; text-align:center;">
+            </div>
+            
+            <div class="sep"></div>
+            
+            <div class="lbl" data-i18n="sp_preset_lbl">Preset Cepat</div>
+            <div class="loto-presets" style="margin-bottom:16px; display:flex; gap:6px; flex-wrap:wrap;">
+              <button class="sp-preset-btn" onclick="lotoPreset(6,49)">🇩🇪 6/49</button>
+              <button class="sp-preset-btn" onclick="lotoPreset(6,45)">🇰🇷 6/45</button>
+              <button class="sp-preset-btn" onclick="lotoPreset(5,70)">🇺🇸 Powerball</button>
+              <button class="sp-preset-btn" onclick="lotoPreset(6,42)">🇮🇩 6/42</button>
+              <button class="sp-preset-btn" onclick="lotoPreset(4,9)"><span data-i18n="lt_custom">4D Custom</span></button>
+            </div>
+            
+            <div class="sep"></div>
+            
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <div class="lbl" style="margin:0">Riwayat</div>
+              <button class="sp-stat-reset" onclick="clearLotoHist()"><i data-lucide="trash-2" style="width:12px"></i> <span data-i18n="lt_clear">Hapus</span></button>
+            </div>
+            <div class="loto-hist" id="lotoHist" style="max-height:160px;overflow-y:auto;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 6. TIMER ── -->
+      <div id="p-tm" class="pn">
+        <div class="hd">
+          <h1 data-i18n="tm_title"><i data-lucide="timer"></i> <span>Timer</span> Countdown</h1>
+          <p data-i18n="tm_desc">Pasang waktu mundur dengan tampilan visual yang elegan.</p>
+        </div>
+        <div class="sp-lay">
+          <div class="sp-c" style="width:100%; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+            <div class="timer-face">
+              <svg class="timer-svg" viewBox="0 0 220 220">
+                <defs>
+                  <filter id="tmGlow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="8" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                  </filter>
+                </defs>
+                <circle class="timer-circle-bg" cx="110" cy="110" r="105" />
+                <circle class="timer-circle-prog" id="tmProg" cx="110" cy="110" r="105" filter="url(#tmGlow)" />
+              </svg>
+              <div class="timer-display" id="tmDisplay">05:00</div>
+              <div class="timer-label" id="tmLabel" data-i18n="tm_ready">Siap</div>
+            </div>
+            
+            <div class="timer-btns" style="margin-top:24px;">
+              <button class="btn btn-g" id="tmStart" onclick="timerToggle()" style="min-width:140px;"><span data-i18n="tm_btn_start"><i data-lucide="play" style="width:18px"></i> Mulai</span></button>
+              <button class="btn" id="tmStopAlarm" onclick="stopTimerAlarm()" style="display:none; background:var(--rose); color:#fff; border-color:var(--rose)"><span data-i18n="tm_btn_stop"><i data-lucide="square" style="width:18px"></i> Matikan Alarm</span></button>
+            </div>
+          </div>
+          
+          <div class="sp-side card" style="min-width:280px;">
+            <div class="lbl" data-i18n="tm_stg_lbl">Pengaturan Timer</div>
+            <div class="timer-custom">
+              <div class="d-stg-row" style="margin-bottom:8px;">
+                <span class="d-stg-lbl" style="min-width:60px;" data-i18n="tm_h">Jam:</span>
+                <input class="inp" type="number" id="tmH" value="0" min="0" max="99" style="flex:1; text-align:center;">
+              </div>
+              <div class="d-stg-row" style="margin-bottom:8px;">
+                <span class="d-stg-lbl" style="min-width:60px;" data-i18n="tm_m">Menit:</span>
+                <input class="inp" type="number" id="tmM" value="5" min="0" max="59" style="flex:1; text-align:center;">
+              </div>
+              <div class="d-stg-row" style="margin-bottom:16px;">
+                <span class="d-stg-lbl" style="min-width:60px;" data-i18n="tm_s">Detik:</span>
+                <input class="inp" type="number" id="tmS" value="0" min="0" max="59" style="flex:1; text-align:center;">
+              </div>
+            </div>
+            <button class="btn" style="width:100%; background:var(--glass); color:var(--t1); border:1px solid var(--bdr); margin-bottom:16px;" onclick="timerReset()">
+              <i data-lucide="rotate-ccw" style="width:16px;"></i> <span data-i18n="tm_apply">Terapkan & Reset</span>
+            </button>
+            
+            <div class="sep"></div>
+            
+            <div class="lbl" data-i18n="sp_preset_lbl">Preset Cepat</div>
+            <div class="timer-presets" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+              <button class="sp-preset-btn" onclick="setTimer(60)"><span data-i18n="tm_1m">1 Menit</span></button>
+              <button class="sp-preset-btn" onclick="setTimer(180)"><span data-i18n="tm_3m">3 Menit</span></button>
+              <button class="sp-preset-btn" onclick="setTimer(300)"><span data-i18n="tm_5m">5 Menit</span></button>
+              <button class="sp-preset-btn" onclick="setTimer(600)"><span data-i18n="tm_10m">10 Menit</span></button>
+              <button class="sp-preset-btn" onclick="setTimer(1800)"><span data-i18n="tm_30m">30 Menit</span></button>
+              <button class="sp-preset-btn" onclick="setTimer(3600)"><span data-i18n="tm_1h">1 Jam</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 7. PASSWORD GENERATOR ── -->
+      <div id="p-pw" class="pn">
+        <div class="hd">
+          <h1 data-i18n="pw_title"><i data-lucide="key"></i> <span>Pembuat</span> Sandi</h1>
+          <p data-i18n="pw_desc">Buat kata sandi acak yang kuat, unik, dan aman untuk akunmu.</p>
+        </div>
+        <div class="sp-lay">
+          <div class="sp-c" style="width:100%; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+            <div style="width:100%; text-align:center; margin-bottom:24px;">
+              <div class="lbl" style="margin-bottom:12px;" data-i18n="pw_res_lbl">Hasil — Ketik sendiri atau Generate</div>
+              <div style="position:relative; width:100%;">
+                <input type="text" class="pw-display rc" id="pwR" value="P@ssw0rd!" oninput="evaluateCustomPw()" autocomplete="off" spellcheck="false" placeholder="Ketik sandi Anda di sini..." data-i18n-placeholder="pw_inp">
+                <button aria-label="Salin Sandi" class="sp-stat-reset" style="position:absolute; right:20px; top:50%; transform:translateY(-50%); background:var(--bg3); padding:8px; border-radius:8px;" onclick="copyPw($('pwR').value)" title="Salin Sandi">
+                  <i data-lucide="copy" style="width:16px; height:16px;"></i>
+                </button>
+              </div>
+              
+              <!-- Strength Meter -->
+              <div class="pw-strength-bar" style="margin-top:16px; background:var(--bg3); height:6px; border-radius:3px; overflow:hidden; display:flex;">
+                <div id="pwStrengthFill" style="height:100%; width:30%; background:var(--rose); transition:all 0.4s ease;"></div>
+              </div>
+              <div id="pwStrengthText" style="font-size:0.75rem; color:var(--rose); font-weight:700; margin-top:8px; text-transform:uppercase; letter-spacing:1px;" data-i18n="pw_weak">Lemah</div>
+            </div>
+            
+            <div style="display:flex;gap:10px;justify-content:center;margin-bottom:16px; width:100%;">
+              <button class="btn btn-g" onclick="genPw()" style="min-width:180px; width:100%; max-width:300px;"><i data-lucide="key" style="width:16px"></i> <span data-i18n="pw_btn">Buat Sandi Baru</span></button>
+            </div>
+          </div>
+          
+          <div class="sp-side card" style="min-width:280px;">
+            <div class="lbl" data-i18n="pw_stg_lbl">Pengaturan Sandi</div>
+            
+            <div style="display:flex;gap:12px;align-items:center;margin-bottom:20px;">
+              <label class="d-stg-lbl" style="margin:0;flex-shrink:0" data-i18n="pw_len">Panjang:</label>
+              <input type="range" id="pwLen" min="6" max="64" value="16" step="1" oninput="$('pwLenVal').innerText=this.value; genPw()" style="flex:1">
+              <span id="pwLenVal" style="font-family:'JetBrains Mono', monospace; font-weight:700; min-width:28px; text-align:right; color:var(--acc)">16</span>
+            </div>
+            
+            <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:24px;">
+              <label class="pw-toggle-lbl">
+                <input type="checkbox" id="pwUc" checked onchange="genPw()">
+                <span class="pw-toggle-btn">ABC</span> <span data-i18n="pw_uc">Huruf Besar</span>
+              </label>
+              <label class="pw-toggle-lbl">
+                <input type="checkbox" id="pwLc" checked onchange="genPw()">
+                <span class="pw-toggle-btn">abc</span> <span data-i18n="pw_lc">Huruf Kecil</span>
+              </label>
+              <label class="pw-toggle-lbl">
+                <input type="checkbox" id="pwNum" checked onchange="genPw()">
+                <span class="pw-toggle-btn">123</span> <span data-i18n="pw_num">Angka</span>
+              </label>
+              <label class="pw-toggle-lbl">
+                <input type="checkbox" id="pwSym" checked onchange="genPw()">
+                <span class="pw-toggle-btn">#$&</span> <span data-i18n="pw_sym">Simbol</span>
+              </label>
+            </div>
+            
+            <div class="sep"></div>
+            
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <div class="lbl" style="margin:0" data-i18n="bg_hist_lbl">Riwayat Terakhir</div>
+              <button class="sp-stat-reset" onclick="clearPwHist()"><i data-lucide="trash-2" style="width:12px"></i> <span data-i18n="lt_clear">Hapus</span></button>
+            </div>
+            <div class="pw-hist" id="pwHist" style="display:flex; flex-direction:column; gap:8px; max-height:160px; overflow-y:auto;">
+              <div style="color:var(--t3); font-size:0.75rem; text-align:center; padding:12px 0;"><span data-i18n="pw_no_hist">Belum ada riwayat</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 8. TEAM GENERATOR ── -->
+      <div id="p-tg" class="pn">
+        <div class="hd">
+          <h1 data-i18n="tg_title"><i data-lucide="users"></i> <span>Pembagi</span> Tim</h1>
+          <p data-i18n="tg_desc">Bagi daftar nama menjadi beberapa kelompok secara acak dan adil.</p>
+        </div>
+        <div class="sp-lay">
+          <div class="sp-c" style="width:100%; min-width:0;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <div class="lbl" style="margin:0;" data-i18n="tg_res_lbl">Hasil Pembagian Tim</div>
+              <button class="sp-stat-reset" onclick="copyTeams()" id="btnCopyTeams" style="display:none; background:var(--glass-hover);">
+                <i data-lucide="copy" style="width:14px; height:14px;"></i> <span data-i18n="tg_btn_copy">Salin Semua</span>
+              </button>
+            </div>
+            
+            <div class="d-tray" style="min-height:200px; margin-bottom:12px; padding:16px;">
+              <div id="tgR" style="display:flex; flex-direction:column; gap:12px; width:100%;">
+                <div style="color:var(--t3); font-size:0.85rem; text-align:center; padding:40px 0; font-style:italic;"><span data-i18n="tg_empty">Belum ada tim yang dibagikan. Masukkan nama dan klik "<span data-i18n="tg_btn">Bagi Tim</span>".</span></div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="sp-side card" style="min-width:280px;">
+            <div class="lbl" data-i18n="tg_list_lbl">Daftar Nama</div>
+            <textarea class="inp" id="tgI" spellcheck="false"
+              data-i18n-placeholder="tg_inp" placeholder="Masukkan nama, pisahkan koma atau baris baru...&#10;Tip: Tambahkan (L) atau (P) untuk sebaran gender yang rata.&#10;Contoh: Andi (L), Siti (P), Budi (L)" style="min-height:160px; margin-bottom:12px; resize:vertical; font-family:'JetBrains Mono', monospace; font-size:0.8rem;"></textarea>
+            
+            <div style="background:var(--bg3); padding:12px; border-radius:8px; border-left:3px solid var(--acc); font-size:0.75rem; color:var(--t2); margin-bottom:12px; line-height:1.4;">
+              <strong data-i18n="tg_ai_guide_title">💡 Panduan Distribusi AI:</strong><br>
+              <span data-i18n="tg_ai_guide_body">Fitur <b>Tebak Gender Otomatis</b> di bawah akan mencoba menebak gender berdasarkan pola nama agar komposisi tim rata. Jika ada nama unik/singkatan, Anda bisa <b>memastikan akurasi 100%</b> dengan menambahkan tanda <code>(L)</code> untuk Laki-laki atau <code>(P)</code> untuk Perempuan di belakang nama tersebut. <br><i>Contoh: Alex (L), Taylor (P)</i>.</span>
+              <br><button onclick="document.getElementById('tgI').value = 'Budi, Siti, Alex (L), Taylor (P), Agus, Ayu, Kevin, Sarah'; document.getElementById('tgAutoGender').checked = true; genTeams();" style="margin-top:8px; padding:6px 12px; background:var(--acc-s); color:var(--acc); border:1px solid rgba(255,179,0,0.3); border-radius:6px; font-weight:700; cursor:pointer; font-size:0.7rem; transition:0.2s; display:inline-block;" data-i18n="tg_try_example">Coba Contoh Otomatis</button>
+            </div>
+            
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; padding: 10px; background: rgba(255,179,0,0.1); border: 1px solid rgba(255,179,0,0.3); border-radius: 8px;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <i data-lucide="bot" style="width:16px; color:var(--acc);"></i>
+                <div>
+                  <div style="font-size:0.75rem; font-weight:700; color:var(--t1);" data-i18n="tg_ai_lbl">Tebak Gender Otomatis</div>
+                  <div style="font-size:0.65rem; color:var(--t3);" data-i18n="tg_ai_desc">Otomatis meratakan tanpa (L)/(P)</div>
+                </div>
+              </div>
+              <label class="tg-switch" style="transform: scale(0.85); margin:0;">
+                <input type="checkbox" id="tgAutoGender" checked>
+                <span class="tg-slider"></span>
+              </label>
+            </div>
+
+            <div class="d-stg-row" style="margin-bottom:16px;">
+              <span class="d-stg-lbl" style="min-width:90px;" data-i18n="tg_qty">Jumlah Tim:</span>
+              <input class="inp" type="number" id="tgCount" value="2" min="2" max="20" style="flex:1; text-align:center;">
+            </div>
+            
+            <button class="btn btn-g" onclick="genTeams()" style="width:100%;">
+              <i data-lucide="users" style="width:16px; height:16px;"></i> <span data-i18n="tg_btn">Bagi Tim</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 9. DONATION ── -->
+      <div id="p-dn" class="pn">
+        <div class="hd" style="text-align: center; margin-bottom: 20px;">
+          <h1 data-i18n="dn_title"><i data-lucide="heart" style="color:var(--rose)"></i> <span>Dukung Zlip</span></h1>
+          <p data-i18n="dn_desc" style="max-width: 500px; margin: 8px auto 0;">Jika Zlip membantu aktivitasmu, kamu bisa mendukung pengembangan aplikasi ini agar tetap gratis dan terus diperbarui.</p>
+        </div>
+        <div class="dn-card">
+          <i data-lucide="heart" style="width:48px;height:48px"></i>
+          
+          <div class="dn-nominal-row">
+            <button class="dn-nominal-btn" onclick="setNominal(5000, this)">Rp5.000</button>
+            <button class="dn-nominal-btn on" onclick="setNominal(10000, this)">Rp10.000</button>
+            <button class="dn-nominal-btn" onclick="setNominal(25000, this)">Rp25.000</button>
+            <button class="dn-nominal-btn" onclick="setNominal(50000, this)">Rp50.000</button>
+          </div>
+          
+          <div style="display:flex; flex-direction:column; gap:12px; margin-top:24px;">
+            <button class="btn btn-g" onclick="openDonation()" style="width:100%; justify-content:center; padding:16px;">
+              <span data-i18n="dn_btn_support">Dukung Sekarang</span> <i data-lucide="arrow-right" style="width:18px;"></i>
+            </button>
+            <button class="btn" onclick="copyDonationLink()" style="width:100%; justify-content:center; background:transparent; border:1px solid var(--glass-border); color:var(--t2);">
+              <i data-lucide="copy" style="width:16px;"></i> <span data-i18n="dn_btn_copy">Salin Link Donasi</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 10. SETTINGS / PENGATURAN ── -->
+      <div id="p-settings" class="pn">
+        <div class="hd">
+          <h1 data-i18n="nav_set"><i data-lucide="settings"></i> <span>Pengaturan</span></h1>
+          <p data-i18n="set_desc">Sesuaikan preferensi aplikasi Anda.</p>
+        </div>
+
+        <div class="card" style="margin-bottom:20px;display:flex;flex-direction:column;gap:20px">
+          <div class="lbl" style="margin-bottom:0;" data-i18n="set_pref_lbl">Tampilan & Preferensi</div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="width:36px; height:36px; border-radius:10px; background:var(--bg3); display:flex; align-items:center; justify-content:center; color:var(--acc);">
+                <i data-lucide="languages" style="width:18px;"></i>
+              </div>
+              <div>
+                <div style="font-weight:700; color:var(--t1); font-size:0.9rem;" data-i18n="set_lang">Bahasa / Language</div>
+                <div style="font-size:0.75rem; color:var(--t3);" data-i18n="set_lang_desc">Pilih bahasa utama aplikasi</div>
+              </div>
+            </div>
+            <select class="inp" id="langSelect" onchange="changeLang(this.value)" style="width:auto; padding:6px 12px; cursor:pointer;">
+              <option value="en">English (EN)</option>
+              <option value="id">Indonesia (ID)</option>
+            </select>
+          </div>
+
+          
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="width:36px; height:36px; border-radius:10px; background:var(--bg3); display:flex; align-items:center; justify-content:center; color:var(--acc);">
+                <i data-lucide="moon" style="width:18px;"></i>
+              </div>
+              <div>
+                <div style="font-weight:700; color:var(--t1); font-size:0.9rem;" data-i18n="set_dark">Tema Gelap</div>
+                <div style="font-size:0.75rem; color:var(--t3);" data-i18n="set_dark_desc">Gunakan tema gelap agar lebih nyaman di mata</div>
+              </div>
+            </div>
+            <label class="tg-switch">
+              <input type="checkbox" id="settingThemeToggle" onchange="toggleTheme()">
+              <span class="tg-slider"></span>
+            </label>
+          </div>
+          
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="width:36px; height:36px; border-radius:10px; background:var(--bg3); display:flex; align-items:center; justify-content:center; color:var(--acc);">
+                <i data-lucide="volume-2" style="width:18px;"></i>
+              </div>
+              <div>
+                <div style="font-weight:700; color:var(--t1); font-size:0.9rem;" data-i18n="set_snd">Nonaktifkan Suara</div>
+                <div style="font-size:0.75rem; color:var(--t3);" data-i18n="set_snd_desc">Matikan semua efek suara saat berinteraksi</div>
+              </div>
+            </div>
+            <label class="tg-switch">
+              <input type="checkbox" id="settingSoundToggle" onchange="toggleSound()">
+              <span class="tg-slider"></span>
+            </label>
+          </div>
+          
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="width:36px; height:36px; border-radius:10px; background:var(--bg3); display:flex; align-items:center; justify-content:center; color:var(--acc);">
+                <i data-lucide="sparkles" style="width:18px;"></i>
+              </div>
+              <div>
+                <div style="font-weight:700; color:var(--t1); font-size:0.9rem;" data-i18n="set_anim">Nonaktifkan Animasi</div>
+                <div style="font-size:0.75rem; color:var(--t3);" data-i18n="set_anim_desc">Matikan efek visual untuk performa maksimal</div>
+              </div>
+            </div>
+            <label class="tg-switch">
+              <input type="checkbox" id="settingAnimToggle" onchange="toggleAnim()">
+              <span class="tg-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="card" id="pwaCard" style="display:none; margin-bottom:20px; flex-direction:column; gap:16px;">
+          <div class="lbl" style="margin-bottom:0;" data-i18n="set_pwa_lbl">Aplikasi (PWA)</div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="width:36px; height:36px; border-radius:10px; background:var(--bg3); display:flex; align-items:center; justify-content:center; color:var(--acc);">
+                <i data-lucide="smartphone" style="width:18px;"></i>
+              </div>
+              <div>
+                <div style="font-weight:700; color:var(--t1); font-size:0.9rem;" data-i18n="set_pwa_install">Install Aplikasi</div>
+                <div style="font-size:0.75rem; color:var(--t3);" data-i18n="set_pwa_desc">Tambahkan ke Layar Utama</div>
+              </div>
+            </div>
+            <button class="btn btn-g" id="btnInstallPwa" style="padding:6px 16px;">
+              <span data-i18n="set_pwa_btn">Install</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:20px;display:flex;flex-direction:column;gap:16px">
+          <div class="lbl" data-i18n="set_data_lbl">Data & Penyimpanan</div>
+          
+          <button class="btn btn-g" onclick="exportData()">
+            <i data-lucide="download"></i> <span data-i18n="set_btn_exp">Ekspor Data (JSON)</span>
+          </button>
+          
+          <div style="display:flex;gap:10px">
+            <input type="file" id="importFile" accept=".json" style="display:none" onchange="if(this.files[0]) importData(this.files[0])">
+            <button class="btn btn-g" onclick="$('importFile').click()" style="flex:1">
+              <i data-lucide="upload"></i> <span data-i18n="set_btn_imp">Impor Data</span>
+            </button>
+            <button class="btn btn-g" onclick="resetAllData()" style="flex:1">
+              <i data-lucide="trash-2"></i> <span data-i18n="set_btn_rst">Reset Semua</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Win Modal for Spinner telah dihapus -->
+
+  <!-- Confirm Modal -->
+  <div id="confirmModal" class="modal-overlay" style="display: none;">
+    <div class="win-card" style="padding:30px;min-width:300px;">
+      <div style="display:flex; justify-content:center; margin-bottom:16px;"><i data-lucide="alert-triangle" style="width:48px; height:48px; color:var(--rose);"></i></div>
+      <div class="win-name" id="confirmTitle" style="font-size:1.4rem;margin-bottom:12px;" data-i18n="mdl_conf_title">Konfirmasi</div>
+      <div id="confirmMsg" style="color:var(--t2);margin-bottom:24px;font-size:0.9rem;line-height:1.4" data-i18n="mdl_conf_msg">Apakah Anda yakin?</div>
+      <div style="display:flex;gap:10px;justify-content:center;">
+        <button class="btn btn-r" id="confirmYesBtn" style="flex:1"><span data-i18n="mdl_yes">Ya, Lanjutkan</span></button>
+        <button class="btn" style="background:var(--glass);color:var(--t1);border:1px solid var(--bdr);flex:1" onclick="closeConfirmModal()"><span data-i18n="mdl_cancel">Batal</span></button>
+      </div>
+    </div>
+  </div>
+
+  <canvas class="confetti" id="cfC"></canvas>
+  
+  <!-- Load Scripts modularly -->
+  <script src="js/core/i18n.js"></script>
+  <script src="js/core/storage.js"></script>
+  <script src="js/core/audio.js"></script>
+  <script src="js/ui/ui.js"></script>
+  <script src="js/games/spinner.js"></script>
+  <script src="js/games/dice.js"></script>
+  <script src="js/games/coin.js"></script>
+  <script src="js/games/cards.js"></script>
+  <script src="js/games/bingo.js"></script>
+  <script src="js/games/lottery.js"></script>
+  <script src="js/tools/timer.js"></script>
+  <script src="js/tools/password.js"></script>
+  <script src="js/ui/team.js"></script>
+  <script src="js/ui/donation.js"></script>
+
+  <script src="js/core/main.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,39 @@
+{
+  "id": "./",
+  "name": "Zlip Multi Randomizer",
+  "short_name": "Zlip",
+  "description": "Aplikasi multi randomizer untuk spinner, dadu, koin, bingo, lotere, timer, password, dan pembagi tim.",
+  "lang": "id",
+  "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#253041",
+  "theme_color": "#FFB300",
+  "categories": ["utilities", "productivity", "games"],
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'zlip-v20';
+const CACHE_NAME = 'zlip-v29';
 const urlsToCache = [
   './',
   './index.html',
@@ -14,6 +14,7 @@ const urlsToCache = [
   './assets/images/logo.webp',
   './assets/icons/icon-192.png',
   './assets/icons/icon-512.png',
+  './assets/icons/maskable-192.png',
   './assets/icons/maskable-512.png',
   './js/core/main.js',
   './js/core/storage.js',

@@ -399,6 +399,7 @@ textarea.inp { resize: vertical; min-height: 100px; line-height: 1.6 }
   background: transparent; border: 0; color: var(--t3);
   font-size: .68rem; font-weight: 600; cursor: pointer;
   display: flex; align-items: center; gap: 4px;
+  min-height: 32px; padding: 4px 6px; border-radius: 8px;
   font-family: inherit;
   transition: color .2s;
 }

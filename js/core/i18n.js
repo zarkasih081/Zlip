@@ -154,6 +154,16 @@ const I18N = {
     "tg_ai_lbl": "AI Gender Guess",
     "tg_ai_desc": "Auto balance without (M)/(F)",
     "tg_qty": "Team Count:",
+    "tg_task_lbl": "Task Division (Optional)",
+    "tg_task_inp": "Enter tasks, separated by comma or new line...\nExample: Leader, Documentation, Presentation, Timekeeper",
+    "tg_task_mode": "Task Mode:",
+    "tg_task_person": "Per Person",
+    "tg_task_team": "Per Team",
+    "tg_task_title": "Tasks",
+    "tg_task_unique": "Do not repeat tasks",
+    "tg_task_shuffle": "Shuffle Tasks",
+    "msg_tg_task_need": "Add tasks before shuffling!",
+    "msg_tg_task_short": "Not enough tasks for unique assignment.",
     "tg_btn": "Divide Team",
     // Cards
     "nav_cd": "Cards",
@@ -290,8 +300,8 @@ const I18N = {
     "sp_err_min_spin": "Need at least 2 items to spin!",
     "msg_update": "Update available! Reload the app.",
     "msg_tg_copy_fail": "Failed to copy. Please copy manually.",
-    "tg_ai_guide_title": "💡 Auto Distribution Guide:",
-    "tg_ai_guide_body": "The <b>Auto Gender Balance</b> feature below will try to guess genders based on names for an even team distribution. You can ensure 100% accuracy by adding <code>(L)</code>/<code>(M)</code> for Male or <code>(P)</code>/<code>(F)</code> for Female behind the name. <br><i>Example: Alex (M), Taylor (F)</i>.",
+    "tg_ai_guide_title": "Auto Distribution Guide",
+    "tg_ai_guide_body": "The <b>Auto Gender Balance</b> option below estimates gender from name patterns to help balance teams. For unusual names or abbreviations, add <code>(L)</code>/<code>(M)</code> for Male or <code>(P)</code>/<code>(F)</code> for Female behind the name. <br><i>Example: Alex (M), Taylor (F)</i>.",
     "tg_try_example": "Try Auto Example",
     "tg_res_hdr": "📋 TEAM DIVISION RESULT",
     "tg_res_team": "TEAM",
@@ -478,6 +488,16 @@ const I18N = {
     "tg_ai_lbl": "Tebak Gender Otomatis",
     "tg_ai_desc": "Otomatis meratakan tanpa (L)/(P)",
     "tg_qty": "Jumlah Tim:",
+    "tg_task_lbl": "Pembagian Tugas (Opsional)",
+    "tg_task_inp": "Masukkan tugas, pisahkan koma atau baris baru...\nContoh: Leader, Dokumentasi, Presentasi, Timekeeper",
+    "tg_task_mode": "Mode Tugas:",
+    "tg_task_person": "Per Orang",
+    "tg_task_team": "Per Tim",
+    "tg_task_title": "Tugas",
+    "tg_task_unique": "Jangan ulang tugas",
+    "tg_task_shuffle": "Acak Ulang Tugas",
+    "msg_tg_task_need": "Tambahkan tugas dulu sebelum mengacak!",
+    "msg_tg_task_short": "Jumlah tugas belum cukup untuk pembagian unik.",
     "tg_btn": "Bagi Tim",
 
     // Settings
@@ -592,8 +612,8 @@ const I18N = {
     "sp_err_min_spin": "Minimal 2 item untuk memutar!",
     "msg_update": "Pembaruan tersedia! Muat ulang aplikasi.",
     "msg_tg_copy_fail": "Gagal menyalin. Salin manual dari teks yang ditampilkan.",
-    "tg_ai_guide_title": "💡 Panduan Distribusi Otomatis:",
-    "tg_ai_guide_body": "Fitur <b>Tebak Gender Otomatis</b> di bawah akan mencoba menebak gender berdasarkan pola nama agar komposisi tim rata. Jika ada nama unik/singkatan, Anda bisa <b>memastikan akurasi 100%</b> dengan menambahkan tanda <code>(L)</code> untuk Laki-laki atau <code>(P)</code> untuk Perempuan di belakang nama tersebut. <br><i>Contoh: Alex (L), Taylor (P)</i>.",
+    "tg_ai_guide_title": "Panduan Distribusi Otomatis",
+    "tg_ai_guide_body": "Opsi <b>Tebak Gender Otomatis</b> di bawah memperkirakan gender dari pola nama untuk membantu meratakan komposisi tim. Untuk nama unik atau singkatan, tambahkan tanda <code>(L)</code> untuk Laki-laki atau <code>(P)</code> untuk Perempuan di belakang nama tersebut. <br><i>Contoh: Alex (L), Taylor (P)</i>.",
     "tg_try_example": "Coba Contoh Otomatis",
     "tg_res_hdr": "📋 HASIL PEMBAGIAN TIM",
     "tg_res_team": "TIM",
@@ -616,6 +636,8 @@ function t(key, fallback = null) {
 }
 
 function applyLanguage() {
+  const lang = (typeof GlobalState !== 'undefined' && GlobalState.lang) ? GlobalState.lang : 'en';
+  document.documentElement.lang = lang;
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const trans = t(el.getAttribute('data-i18n'));
     if (trans.includes('<')) {
@@ -646,6 +668,7 @@ function updateDynamicTexts() {
   if (typeof renderFavorites === 'function') renderFavorites();
   if (typeof renderGlobalHistory === 'function') renderGlobalHistory();
   if (typeof renderTimer === 'function') renderTimer();
+  if (typeof renderTeamResult === 'function' && typeof _lastTeams !== 'undefined' && _lastTeams.length) renderTeamResult(false);
 }
 
 function changeLang(newLang) {

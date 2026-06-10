@@ -192,6 +192,93 @@
   transition: all 0.2s;
 }
 .team-badge:hover { background: rgba(255,179,0,0.1); border-color: var(--acc); color: var(--acc); transform: translateY(-2px); }
+.team-member-task {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  padding: 2px 7px;
+  margin-left: 2px;
+  border-radius: 999px;
+  background: var(--acc-s);
+  color: var(--acc);
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+.team-task-list {
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: -2px 0 12px;
+}
+.team-task-title {
+  color: var(--t3);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.team-task-chip {
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,179,0,0.25);
+  background: var(--acc-s);
+  color: var(--acc);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+.tg-guide {
+  background: var(--bg3);
+  border: 1px solid var(--glass-border);
+  border-left: 3px solid var(--acc);
+  border-radius: 10px;
+  color: var(--t2);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.tg-guide summary {
+  align-items: center;
+  color: var(--t1);
+  cursor: pointer;
+  display: flex;
+  font-size: 0.75rem;
+  font-weight: 800;
+  gap: 8px;
+  justify-content: space-between;
+  list-style: none;
+  padding: 9px 12px;
+}
+.tg-guide summary::-webkit-details-marker { display: none; }
+.tg-guide[open] summary { border-bottom: 1px solid var(--glass-border); }
+.tg-guide summary i {
+  color: var(--acc);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+.tg-guide[open] summary i { transform: rotate(180deg); }
+.tg-guide-body {
+  font-size: 0.75rem;
+  line-height: 1.45;
+  padding: 10px 12px 12px;
+}
+.tg-guide-body button {
+  background: var(--acc-s);
+  border: 1px solid rgba(255,179,0,0.3);
+  border-radius: 8px;
+  color: var(--acc);
+  cursor: pointer;
+  display: inline-block;
+  font-family: inherit;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-top: 8px;
+  padding: 6px 12px;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.tg-guide-body button:hover {
+  background: rgba(255,179,0,0.16);
+  transform: translateY(-1px);
+}
 
 @keyframes teamPop {
   0% { opacity: 0; transform: translateY(20px) scale(0.95); }

@@ -170,6 +170,17 @@ window.onload = () => {
   const storedTg = getStore('tg', "Andi, Budi, Citra, Dian, Eka, Fajar, Gina, Hadi");
   const tgInp = $('tgI');
   if(tgInp) tgInp.value = storedTg;
+
+  const tgTasks = $('tgTasks');
+  if(tgTasks) tgTasks.value = getStore('tgTasks', '');
+
+  const tgTaskMode = $('tgTaskMode');
+  if(tgTaskMode) tgTaskMode.value = getStore('tgTaskMode', 'person');
+
+  const tgUniqueTasks = $('tgUniqueTasks');
+  if(tgUniqueTasks) tgUniqueTasks.checked = getStore('tgUniqueTasks', false);
+
+  if(typeof restoreTeamResult === 'function') restoreTeamResult();
   
   const pwLen = $('pwLen');
   if(pwLen) {

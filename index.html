@@ -782,15 +782,20 @@
           <div class="sp-side card" style="min-width:280px;">
             <div class="lbl" data-i18n="tg_list_lbl">Daftar Nama</div>
             <textarea class="inp" id="tgI" spellcheck="false"
-              data-i18n-placeholder="tg_inp" placeholder="Masukkan nama, pisahkan koma atau baris baru...&#10;Tip: Tambahkan (L) atau (P) untuk sebaran gender yang rata.&#10;Contoh: Andi (L), Siti (P), Budi (L)" style="min-height:160px; margin-bottom:12px; resize:vertical; font-family:'JetBrains Mono', monospace; font-size:0.8rem;"></textarea>
+              data-i18n-placeholder="tg_inp" placeholder="Masukkan nama, pisahkan koma atau baris baru...&#10;Tip: Tambahkan (L) atau (P) untuk sebaran gender yang rata.&#10;Contoh: Andi (L), Siti (P), Budi (L)" style="min-height:130px; margin-bottom:12px; resize:vertical; font-family:'JetBrains Mono', monospace; font-size:0.8rem;"></textarea>
             
-            <div style="background:var(--bg3); padding:12px; border-radius:8px; border-left:3px solid var(--acc); font-size:0.75rem; color:var(--t2); margin-bottom:12px; line-height:1.4;">
-              <strong data-i18n="tg_ai_guide_title">💡 Panduan Distribusi AI:</strong><br>
-              <span data-i18n="tg_ai_guide_body">Fitur <b>Tebak Gender Otomatis</b> di bawah akan mencoba menebak gender berdasarkan pola nama agar komposisi tim rata. Jika ada nama unik/singkatan, Anda bisa <b>memastikan akurasi 100%</b> dengan menambahkan tanda <code>(L)</code> untuk Laki-laki atau <code>(P)</code> untuk Perempuan di belakang nama tersebut. <br><i>Contoh: Alex (L), Taylor (P)</i>.</span>
-              <br><button onclick="document.getElementById('tgI').value = 'Budi, Siti, Alex (L), Taylor (P), Agus, Ayu, Kevin, Sarah'; document.getElementById('tgAutoGender').checked = true; genTeams();" style="margin-top:8px; padding:6px 12px; background:var(--acc-s); color:var(--acc); border:1px solid rgba(255,179,0,0.3); border-radius:6px; font-weight:700; cursor:pointer; font-size:0.7rem; transition:0.2s; display:inline-block;" data-i18n="tg_try_example">Coba Contoh Otomatis</button>
-            </div>
+            <details class="tg-guide">
+              <summary>
+                <span data-i18n="tg_ai_guide_title">Panduan Distribusi Otomatis</span>
+                <i data-lucide="chevron-down" style="width:14px; height:14px;"></i>
+              </summary>
+              <div class="tg-guide-body">
+                <span data-i18n="tg_ai_guide_body">Fitur <b>Tebak Gender Otomatis</b> di bawah akan mencoba menebak gender berdasarkan pola nama agar komposisi tim rata. Jika ada nama unik/singkatan, Anda bisa <b>memastikan akurasi 100%</b> dengan menambahkan tanda <code>(L)</code> untuk Laki-laki atau <code>(P)</code> untuk Perempuan di belakang nama tersebut. <br><i>Contoh: Alex (L), Taylor (P)</i>.</span>
+                <button onclick="document.getElementById('tgI').value = 'Budi, Siti, Alex (L), Taylor (P), Agus, Ayu, Kevin, Sarah'; document.getElementById('tgAutoGender').checked = true; genTeams();" data-i18n="tg_try_example">Coba Contoh Otomatis</button>
+              </div>
+            </details>
             
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; padding: 10px; background: rgba(255,179,0,0.1); border: 1px solid rgba(255,179,0,0.3); border-radius: 8px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding: 10px; background: rgba(255,179,0,0.1); border: 1px solid rgba(255,179,0,0.3); border-radius: 8px;">
               <div style="display:flex; align-items:center; gap:8px;">
                 <i data-lucide="bot" style="width:16px; color:var(--acc);"></i>
                 <div>
@@ -804,10 +809,34 @@
               </label>
             </div>
 
-            <div class="d-stg-row" style="margin-bottom:16px;">
+            <div class="d-stg-row" style="margin-bottom:12px;">
               <span class="d-stg-lbl" style="min-width:90px;" data-i18n="tg_qty">Jumlah Tim:</span>
               <input class="inp" type="number" id="tgCount" value="2" min="2" max="20" style="flex:1; text-align:center;">
             </div>
+
+            <div class="sep"></div>
+
+            <div class="lbl" data-i18n="tg_task_lbl">Pembagian Tugas (Opsional)</div>
+            <textarea class="inp" id="tgTasks" spellcheck="false" oninput="if(typeof refreshTeamTaskActions==='function') refreshTeamTaskActions()"
+              data-i18n-placeholder="tg_task_inp" placeholder="Masukkan tugas, pisahkan koma atau baris baru...&#10;Contoh: Leader, Dokumentasi, Presentasi, Timekeeper" style="min-height:80px; margin-bottom:12px; resize:vertical; font-family:'JetBrains Mono', monospace; font-size:0.8rem;"></textarea>
+
+            <div class="d-stg-row" style="margin-bottom:12px;">
+              <span class="d-stg-lbl" style="min-width:90px;" data-i18n="tg_task_mode">Mode Tugas:</span>
+              <select class="inp" id="tgTaskMode" style="flex:1; cursor:pointer;">
+                <option value="person" data-i18n="tg_task_person">Per Orang</option>
+                <option value="team" data-i18n="tg_task_team">Per Tim</option>
+              </select>
+            </div>
+
+            <label class="pw-toggle-lbl" style="margin-bottom:12px;">
+              <input type="checkbox" id="tgUniqueTasks">
+              <span class="pw-toggle-btn"><i data-lucide="check" style="width:14px;height:14px;"></i></span>
+              <span data-i18n="tg_task_unique">Jangan ulang tugas</span>
+            </label>
+
+            <button class="btn" id="btnShuffleTasks" onclick="shuffleTeamTasks()" style="display:none; width:100%; margin-bottom:10px; background:var(--glass); color:var(--t1); border:1px solid var(--bdr);">
+              <i data-lucide="shuffle" style="width:16px; height:16px;"></i> <span data-i18n="tg_task_shuffle">Acak Ulang Tugas</span>
+            </button>
             
             <button class="btn btn-g" onclick="genTeams()" style="width:100%;">
               <i data-lucide="users" style="width:16px; height:16px;"></i> <span data-i18n="tg_btn">Bagi Tim</span>

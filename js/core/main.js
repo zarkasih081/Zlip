@@ -70,7 +70,6 @@ function toggleAnim() {
 
 function go(n) {
   if (typeof stopTimerAlarm === 'function') stopTimerAlarm();
-  if (typeof toggleAutoDrawBg === 'function' && typeof _bgAutoDrawInt !== 'undefined' && _bgAutoDrawInt) toggleAutoDrawBg();
 
   document.querySelectorAll('.pn').forEach(p => p.classList.remove('on'));
   document.querySelectorAll('.sb-i').forEach(s => s.classList.remove('on'));
@@ -111,15 +110,13 @@ function renderFavorites() {
   container.innerHTML = '';
   
   const allFeatures = {
-    'sp': { icon: 'pie-chart', name: t('nav_sp'), color: 'var(--acc)' },
-    'dc': { icon: 'dice-5', name: t('nav_dc'), color: 'var(--violet)' },
-    'cn': { icon: 'coins', name: t('nav_cn'), color: 'var(--acc)' },
-    'cd': { icon: 'layers', name: t('nav_cd'), color: 'var(--rose)' },
-    'bg': { icon: 'grid-3x3', name: t('nav_bg'), color: 'var(--sky)' },
-    'lt': { icon: 'ticket', name: t('nav_lt'), color: 'var(--cyan)' },
-    'tm': { icon: 'timer', name: t('nav_tm'), color: 'var(--grn)' },
-    'tg': { icon: 'users', name: t('nav_tg'), color: 'var(--ora)' },
-    'pw': { icon: 'key', name: t('nav_pw'), color: '#ff69b4' } // Merah muda
+    'sp': { icon: 'pie-chart', name: t('nav_sp') || 'Roda', color: 'var(--acc)' },
+    'dc': { icon: 'dice-5', name: t('nav_dc') || 'Dadu', color: 'var(--violet)' },
+    'cn': { icon: 'coins', name: t('nav_cn') || 'Koin', color: 'var(--acc)' },
+    'tg': { icon: 'users', name: t('nav_tg') || 'Tim', color: 'var(--ora)' },
+    'class': { icon: 'graduation-cap', name: t('nav_class') || 'Kelas', color: 'var(--sky)' },
+    'num': { icon: 'hash', name: t('nav_num') || 'Angka', color: 'var(--cyan)' },
+    'tm': { icon: 'timer', name: t('nav_tm') || 'Timer', color: 'var(--grn)' }
   };
   
   Object.keys(allFeatures).forEach(f => {
@@ -163,7 +160,6 @@ window.onload = () => {
   
   // 2. Initialize Features
   if(typeof initSpinner === 'function') initSpinner();
-  if(typeof initBg === 'function') initBg();
   if(typeof renderTimer === 'function') renderTimer();
   if(typeof updateIdleCoins === 'function') updateIdleCoins();
   
@@ -182,12 +178,7 @@ window.onload = () => {
 
   if(typeof restoreTeamResult === 'function') restoreTeamResult();
   
-  const pwLen = $('pwLen');
-  if(pwLen) {
-    const pwVal = $('pwLenVal');
-    if(pwVal) pwVal.innerText = pwLen.value;
-    if(typeof genPw === 'function') genPw();
-  }
+  // removed pw init
   
   // 3. Render Home widgets
   renderFavorites();

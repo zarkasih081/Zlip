@@ -557,88 +557,6 @@ textarea.inp { resize: vertical; min-height: 100px; line-height: 1.6 }
   100% { opacity: 1; transform: scale(1.05); color: var(--acc); filter: drop-shadow(0 0 10px rgba(255,179,0,0.5)); }
 }
 
-/* --------------------------------------
-   7. BINGO
--------------------------------------- */
-.bg-letter {
-  font-family: inherit; font-size: 1.8rem; font-weight: 900;
-  padding: 8px 16px; background: var(--acc-s);
-  color: var(--acc); border-radius: 12px;
-  border: 1px solid rgba(255,179,0,.28);
-}
-.bg-grid {
-  display: grid; grid-template-columns: repeat(15,1fr);
-  gap: 4px; margin: 8px 0;
-}
-.bg-num {
-  aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
-  border-radius: 8px; font-size: .7rem; font-weight: 700; font-family: 'JetBrains Mono', monospace;
-  background: var(--glass); border: 1px solid var(--glass-border);
-  color: var(--t3); transition: all .3s; cursor: default;
-}
-.bg-num.on {
-  background: var(--acc-s); color: var(--acc);
-  border-color: rgba(255,179,0,.3);
-  box-shadow: 0 0 10px rgba(255,179,0,.15);
-}
-.bg-num.new-draw {
-  animation: bgPop .5s cubic-bezier(.34,1.56,.64,1);
-}
-@keyframes bgPop {
-  0%  { transform: scale(0) }
-  70% { transform: scale(1.3) }
-  100%{ transform: scale(1) }
-}
-.bg-col-labels { display: grid; grid-template-columns: repeat(15,1fr); gap: 4px; margin-bottom: 4px }
-.bg-col-lbl {
-  aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
-  font-size: .62rem; font-weight: 900; color: var(--acc); text-transform: uppercase;
-}
-.bg-hist { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px }
-.bg-hist-num {
-  padding: 4px 10px; border-radius: 50px; font-size: .68rem; font-weight: 700;
-  background: var(--glass); border: 1px solid var(--glass-border);
-  color: var(--t2); font-family: 'JetBrains Mono', monospace;
-  animation: diceAppear .25s cubic-bezier(.34,1.56,.64,1);
-}
-
-
-
-/* ══════════════════════════════════════
-   10. LOTERE
-══════════════════════════════════════ */
-.loto-presets { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 16px }
-.loto-ctrl { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 16px }
-.loto-ctrl label { font-size: .75rem; font-weight: 700; color: var(--t2) }
-.loto-ctrl input[type=number] { width: 70px }
-.loto-balls-area {
-  display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;
-  min-height: 110px; align-items: center; margin: 20px 0;
-}
-.loto-ball {
-  width: 74px; height: 74px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-family: inherit; font-size: 1.4rem; font-weight: 900; color: #fff;
-  box-shadow: inset -5px -5px 14px rgba(0,0,0,.45), 0 10px 24px rgba(0,0,0,.4);
-  animation: ballDrop .45s cubic-bezier(.34,1.56,.64,1) both; position: relative;
-}
-.loto-ball::after {
-  content: ''; position: absolute; top: 16%; left: 24%; width: 30%; height: 20%;
-  background: rgba(255,255,255,.35); border-radius: 50%; filter: blur(3px);
-}
-@keyframes ballDrop {
-  0%  { transform: scale(0) translateY(-24px); opacity: 0 }
-  100%{ transform: scale(1) translateY(0); opacity: 1 }
-}
-.loto-hist { margin-top: 10px; max-height: 160px; overflow-y: auto }
-.loto-hist-row {
-  display: flex; gap: 5px; align-items: center; padding: 7px 0;
-  border-bottom: 1px solid var(--bdr); font-size: .72rem;
-}
-.loto-hist-row:last-child { border-bottom: 0 }
-.loto-hist-num { padding: 2px 8px; border-radius: 50px; color: #fff; font-weight: 700; font-family: 'JetBrains Mono', monospace; font-size: .68rem }
-.loto-hist-time { color: var(--t3); margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: .62rem }
-
 /* ══════════════════════════════════════
    11. TIMER
 ══════════════════════════════════════ */
@@ -669,20 +587,6 @@ textarea.inp { resize: vertical; min-height: 100px; line-height: 1.6 }
   text-transform: uppercase; letter-spacing: 1px; position: relative; z-index: 1; margin-top: 4px;
 }
 .timer-btns { display: flex; gap: 12px; margin-top: 4px }
-
-/* ══════════════════════════════════════
-   12. PASSWORD
-══════════════════════════════════════ */
-.pw-display {
-  width: 100%; font-size: 1.4rem; letter-spacing: 3px;
-  user-select: all; cursor: pointer; text-align: center;
-  font-family: 'JetBrains Mono', monospace; font-weight: 500;
-  padding: 20px 24px; background: var(--glass); border: 1px solid var(--glass-border);
-  border-radius: 16px; transition: all .3s; box-shadow: var(--inset-hi);
-  color: var(--mint);
-}
-.pw-display:hover { background: var(--glass-hover); border-color: var(--bdr-a) }
-.pw-display.win { color: var(--acc); border-color: rgba(255,179,0,.3); box-shadow: var(--acc-glow) }
 
 /* ══════════════════════════════════════
    CONFETTI

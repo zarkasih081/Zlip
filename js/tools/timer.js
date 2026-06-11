@@ -5,16 +5,27 @@ let _tmTotal=0, _tmLeft=0, _tmInterval=null, _tmRunning=false;
 let _tmAlarmInt=null;
 const CIRC=2*Math.PI*105;
 
-function setTimer(s){ 
+function setTimer(h = 0, m = 0, s = 0) {
   stopTimerAlarm();
-  clearTimer(); 
-  _tmTotal=s; 
-  _tmLeft=s; 
-  $('tmH').value=Math.floor(s/3600); 
-  $('tmM').value=Math.floor((s%3600)/60); 
-  $('tmS').value=s%60; 
-  renderTimer(); 
-  $('tmLabel').textContent='Siap'; 
+  clearTimer();
+
+  if (arguments.length === 1) {
+    _tmTotal = h;
+  } else {
+    _tmTotal = h * 3600 + m * 60 + s;
+  }
+
+  _tmLeft = _tmTotal;
+  $('tmH').value = Math.floor(_tmTotal / 3600);
+  $('tmM').value = Math.floor((_tmTotal % 3600) / 60);
+  $('tmS').value = _tmTotal % 60;
+  renderTimer();
+  $('tmLabel').textContent = typeof t === 'function' ? (t('tm_ready') || 'Siap') : 'Siap';
+}
+
+function timerApply() {
+  timerReset();
+  if(typeof msg === 'function') msg(typeof t === 'function' ? (t('tm_applied') || 'Timer diterapkan') : 'Timer diterapkan');
 }
 
 function getInputSecs(){ 

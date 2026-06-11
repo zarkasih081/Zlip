@@ -32,8 +32,7 @@ const GlobalState = {
   theme: getStore('theme', 'light'),
   sound: getStore('sound', true),
   animations: getStore('animations', true),
-  favorites: getStore('favorites', ['sp', 'dc', 'cn', 'tm']),
-  history: getStore('history', [])
+  favorites: getStore('favorites', ['sp', 'dc', 'cn', 'tm'])
 };
 
 function saveGlobalState() {
@@ -42,18 +41,7 @@ function saveGlobalState() {
   setStore('sound', GlobalState.sound);
   setStore('animations', GlobalState.animations);
   setStore('favorites', GlobalState.favorites);
-  setStore('history', GlobalState.history);
-}
 
-function addGlobalHistory(feature, result) {
-  GlobalState.history.unshift({
-    feature,
-    result,
-    time: new Date().toISOString()
-  });
-  if (GlobalState.history.length > 20) GlobalState.history.pop();
-  saveGlobalState();
-  if (typeof renderGlobalHistory === 'function') renderGlobalHistory();
 }
 
 function exportData() {

@@ -6,16 +6,11 @@ let _spElimMode = false;
 let _spStats = {};
 const _imgCache = {};
 const SP_COLORS = {
-  rainbow: ['#ef4444','#f97316','#eab308','#22c55e','#FFD54F','#3b82f6','#8b5cf6','#ec4899'],
-  warm:    ['#ef4444','#f97316','#fb923c','#eab308','#fbbf24','#dc2626','#c2410c','#ca8a04'],
-  cool:    ['#FFD54F','#3b82f6','#6366f1','#8b5cf6','#0ea5e9','#2563eb','#7c3aed','#4f46e5'],
+  default: ['#ef4444','#f97316','#eab308','#22c55e','#FFD54F','#3b82f6','#8b5cf6','#ec4899'],
   neon:    ['#ff006e','#fb5607','#ffbe0b','#3a86ff','#8338ec','#06d6a0','#118ab2','#ff006e'],
-  pastel:  ['#fca5a5','#fdba74','#fde68a','#86efac','#7dd3fc','#c4b5fd','#f9a8d4','#a5b4fc'],
-  mono:    ['#444','#555','#666','#777','#888','#999','#aaa','#bbb'],
   gold:    ['#FFDF00','#D4AF37','#CFB53B','#C5B358','#E6C200','#996515','#B8860B','#DAA520'],
   dark:    ['#1a1a1a','#2b2b2b','#333333','#1f1f1f','#222222','#292929','#303030','#111111'],
-  crystal: ['#E0FFFF','#AFEEEE','#E6E6FA','#F0FFFF','#F5FFFA','#F0F8FF','#E0FFFF','#B0E0E6']
-};
+  };
 let _spHistory = [];
 
 function getSpPresets() {
@@ -115,7 +110,7 @@ function renderSpStats() {
     const row = document.createElement('div');
     row.className = 'sp-stat-row';
     const pct = (count / maxCount * 100).toFixed(0);
-    const C = SP_COLORS[_sPalette] || SP_COLORS.rainbow;
+    const C = SP_COLORS[_sPalette] || SP_COLORS.default;
     const idx = _si.findIndex(s => s.text === name);
     const color = idx >= 0 ? C[idx % C.length] : 'var(--acc)';
     
@@ -143,7 +138,7 @@ function renderSpList() {
     row.style.alignItems = 'stretch';
     row.style.gap = '8px';
     row.style.flexShrink = '0';
-    const C = SP_COLORS[_sPalette] || SP_COLORS.rainbow;
+    const C = SP_COLORS[_sPalette] || SP_COLORS.default;
     const color = C[i % C.length];
     
     const textVal = item.text || '';
@@ -154,14 +149,11 @@ function renderSpList() {
       <div style="display:flex; width:100%; gap:8px; align-items:center;">
         <div class="sp-item-color" style="background:${color}; flex-shrink:0;"></div>
         <input type="text" class="sp-item-text" style="flex:1" placeholder="Nama opsi...">
-        <button class="sp-item-del" style="flex-shrink:0;"><i data-lucide="trash-2" style="width:16px;height:16px"></i></button>
-      </div>
-      <div style="display:flex; width:100%; gap:8px; align-items:center; padding-left:22px">
         <div style="display:flex; align-items:center; gap:4px; flex-shrink:0;">
           <span style="font-size:0.65rem; color:var(--t3); font-weight:700;">BOBOT:</span>
           <input type="number" class="inp sp-item-weight" min="1" max="100" title="Bobot Peluang" style="width:48px; padding:4px; font-size:0.75rem; text-align:center;">
         </div>
-        <input type="text" class="inp sp-item-image" title="URL Gambar" style="flex:1; padding:4px 8px; font-size:0.75rem;">
+        <button class="sp-item-del" style="flex-shrink:0;"><i data-lucide="trash-2" style="width:16px;height:16px"></i></button>
       </div>
     `;
     
@@ -176,10 +168,6 @@ function renderSpList() {
     weightInput.value = weightVal;
     weightInput.addEventListener('change', (e) => updSpItem(i, 'weight', e.target.value));
     
-    const imgInput = row.querySelector('.sp-item-image');
-    imgInput.placeholder = t('sp_img_url_ph') || 'URL Gambar...';
-    imgInput.value = imgVal;
-    imgInput.addEventListener('change', (e) => updSpItem(i, 'image', e.target.value));
     list.appendChild(row);
   });
   if (window.lucide) lucide.createIcons({ root: list });
@@ -318,7 +306,7 @@ function dW() {
   const nubR = Math.max(4, W * 0.018);
   const R = cx - outerRingW - 4;
   const n = _si.length, a = 2 * Math.PI / n;
-  const C = SP_COLORS[_sPalette] || SP_COLORS.rainbow;
+  const C = SP_COLORS[_sPalette] || SP_COLORS.default;
   
   // Premium Glow wrapping
   const wrap = document.querySelector('.sp-wrap');
@@ -335,7 +323,7 @@ function dW() {
   x.beginPath();
   x.arc(cx, cx, cx - 2, 0, 2 * Math.PI);
   const ringGrad = x.createRadialGradient(cx, cx * 0.6, 0, cx, cx, cx);
-  if (_sPalette === 'dark') {
+  if (['dark'].includes(_sPalette)) {
     ringGrad.addColorStop(0, '#555');
     ringGrad.addColorStop(0.5, '#222');
     ringGrad.addColorStop(1, '#111');
@@ -359,7 +347,7 @@ function dW() {
   // Inner cut for wheel area
   x.beginPath();
   x.arc(cx, cx, R + 1, 0, 2 * Math.PI);
-  x.fillStyle = _sPalette === 'dark' ? '#111' : '#000';
+  x.fillStyle = ['dark'].includes(_sPalette) ? '#111' : '#000';
   x.fill();
   
   // ── Segments with gradient ──
@@ -470,7 +458,7 @@ function dW() {
   
   // Hub body
   const hubGrad = x.createRadialGradient(cx - hubR * 0.3, cx - hubR * 0.3, 0, cx, cx, hubR);
-  if (_sPalette === 'dark') {
+  if (['dark'].includes(_sPalette)) {
     hubGrad.addColorStop(0, '#555');
     hubGrad.addColorStop(1, '#111');
   } else if (_sPalette === 'crystal') {
@@ -488,7 +476,7 @@ function dW() {
   x.arc(cx, cx, hubR, 0, 2 * Math.PI);
   x.fillStyle = hubGrad;
   x.fill();
-  x.strokeStyle = _sPalette === 'dark' ? 'rgba(255,255,255,.1)' : 'rgba(0,0,0,.15)';
+  x.strokeStyle = ['dark'].includes(_sPalette) ? 'rgba(255,255,255,.1)' : 'rgba(0,0,0,.15)';
   x.lineWidth = 2;
   x.stroke();
   
@@ -708,7 +696,7 @@ function finishSpin() {
   const winner = _si[winnerIdx] || _si[0];
   const winnerText = winner.text;
   
-  const C = SP_COLORS[_sPalette] || SP_COLORS.rainbow;
+  const C = SP_COLORS[_sPalette] || SP_COLORS.default;
   const winColor = C[winnerIdx % C.length];
   
   $('spR').innerHTML = '';
@@ -728,7 +716,7 @@ function finishSpin() {
     if (typeof playWin === 'function') playWin();
   }
   if (typeof conf === 'function') conf();
-  addGlobalHistory(t('nav_sp'), winnerText);
+
   if (typeof msg === 'function') msg(`Terpilih: ${winnerText}`, 4000, 'none');
   if (typeof announceA11y === 'function') announceA11y(`Roda berhenti di ${winnerText}`);
   
@@ -763,53 +751,6 @@ function renderSpHistory() {
 }
 
 // ── WIN MODAL ──
-const WIN_EMOJIS = ['🎉','🏆','🥳','🎊','⭐','🌟','💥','🔥','👑','💎'];
-let _currentWinIdx = -1;
-
-function openWinModal(name, idx, color) {
-  _currentWinIdx = idx;
-  const wm = $('winModal');
-  if (!wm) return;
-  
-  const emoji = WIN_EMOJIS[Math.floor(cryptoRandom() * WIN_EMOJIS.length)];
-  
-  $('winEmoji').textContent = emoji;
-  $('winName').textContent = name;
-  $('winName').style.color = color || 'var(--t1)';
-  
-  const ribbon = document.querySelector('.win-ribbon');
-  if (ribbon) ribbon.style.background = color || 'var(--acc)';
-  
-  wm.style.display = 'flex';
-}
-
-function closeWinModal() {
-  const wm = $('winModal');
-  if (wm) wm.style.display = 'none';
-  
-  // Auto eliminate if mode is on
-  if (_spElimMode && _currentWinIdx >= 0 && _si.length > 2) {
-    delSpItem(_currentWinIdx);
-    msg(t('msg_winner_removed') || t('msg_winner_removed'));
-  }
-}
-
-function elimWinner() {
-  if (_currentWinIdx >= 0) delSpItem(_currentWinIdx);
-  const wm = $('winModal');
-  if (wm) wm.style.display = 'none';
-}
-
-function spinAgainFromModal() {
-  const wm = $('winModal');
-  if (wm) wm.style.display = 'none';
-  
-  if (_spElimMode && _currentWinIdx >= 0 && _si.length > 2) {
-    delSpItem(_currentWinIdx);
-  }
-  
-  setTimeout(() => spin(), 300);
-}
 
 let _spResizeObserver = null;
 let _spResizeHandler = null;

@@ -119,20 +119,6 @@
   background: rgba(225,29,72,0.1);
 }
 
-/* ══════════════════════════════════════
-   12. PASSWORD OVERRIDES
-══════════════════════════════════════ */
-.pw-display {
-  width: 100%; font-size: 2.5rem; letter-spacing: 2px;
-  cursor: text; text-align: center; outline: none;
-  font-family: 'JetBrains Mono', monospace; font-weight: 700;
-  padding: 40px 24px; background: var(--glass); border: 1px solid var(--glass-border);
-  border-radius: 16px; transition: all .3s; box-shadow: var(--inset-hi);
-  color: var(--mint);
-}
-.pw-display:hover { background: var(--glass-hover); border-color: var(--bdr-a) }
-.pw-display.win { color: var(--acc); border-color: rgba(255,179,0,.3); box-shadow: var(--acc-glow); transform: scale(1.02); }
-
 /* Custom Checkbox Toggle */
 .pw-toggle-lbl {
   display: flex; align-items: center; gap: 12px; font-size: .85rem; font-weight: 600; cursor: pointer;
@@ -149,17 +135,6 @@
 .pw-toggle-lbl input[type="checkbox"]:checked + .pw-toggle-btn {
   background: var(--mint); color: #fff; border-color: var(--mint); box-shadow: 0 0 10px rgba(74,222,128,0.3);
 }
-
-.pw-hist-item {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 8px 12px; background: var(--glass); border: 1px solid var(--glass-border);
-  border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
-  transition: all 0.2s; margin-bottom: 6px;
-}
-.pw-hist-item:hover { background: var(--glass-hover); }
-.pw-hist-pw { color: var(--t1); cursor: pointer; letter-spacing: 1px; }
-.pw-hist-copy { color: var(--t3); cursor: pointer; padding: 4px; border-radius: 4px; display:flex; align-items:center; }
-.pw-hist-copy:hover { color: var(--mint); background: rgba(74,222,128,0.1); }
 
 /* ══════════════════════════════════════
    13. TEAM GENERATOR OVERRIDES

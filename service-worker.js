@@ -1,4 +1,4 @@
-const CACHE_NAME = 'zlip-v29';
+const CACHE_NAME = 'zlip-v4-clean';
 const urlsToCache = [
   './',
   './index.html',
@@ -26,11 +26,9 @@ const urlsToCache = [
   './js/games/spinner.js',
   './js/games/dice.js',
   './js/games/coin.js',
-  './js/games/cards.js',
-  './js/games/bingo.js',
-  './js/games/lottery.js',
   './js/tools/timer.js',
-  './js/tools/password.js',
+  './js/games/class.js',
+  './js/tools/number.js',
   './js/vendor/lucide.min.js'
 ];
 

@@ -520,14 +520,11 @@
             <p class="cls-card-desc" data-i18n="cls_nm_desc">Pilih satu atau beberapa siswa secara acak dari daftar kelas.</p>
             <textarea class="inp" id="clsNameInp" placeholder="Masukkan nama..." data-i18n-placeholder="cls_nm_inp" style="min-height:80px; margin-bottom:12px; resize:vertical;"></textarea>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-              <span class="d-stg-lbl" style="font-size:0.85rem; flex:1;">Jumlah Kelompok:</span>
-              <button class="btn" style="padding:2px 6px; font-size:0.7rem; height:auto; background:var(--bg3); opacity:0.8; cursor:not-allowed;" disabled>
-                <i data-lucide="clipboard-list" style="width:12px;"></i> Gunakan daftar nama
-              </button>
+              <span class="d-stg-lbl" style="font-size:0.85rem;" data-i18n="cls_nm_qty">Jumlah:</span>
+              <span id="clsNameTotal" style="font-size:0.75rem; color:var(--t3);">Total nama: 0</span>
             </div>
-            <div style="font-size:0.75rem; color:var(--t3); text-align:right; margin-bottom:12px;">Data kelompok otomatis diambil dari tab Nama.</div>
             <div class="d-stg-row" style="margin-bottom:12px;">
-              <input class="inp" type="number" id="clsTeamCount" value="2" min="2" max="20" style="width:100%; text-align:center;">
+              <input class="inp" type="number" id="clsNameCount" value="1" min="1" max="50" style="width:100%; text-align:center;">
             </div>
             <label class="pw-toggle-lbl" style="margin-bottom:12px;">
               <input type="checkbox" id="clsNameRemove">
@@ -538,6 +535,9 @@
               <i data-lucide="check-circle" style="width:16px;"></i> <span data-i18n="cls_nm_btn">Pilih Nama</span>
             </button>
             <div class="cls-res-box" id="clsNameResult"></div>
+            <button class="btn" id="clsNameCopyBtn" onclick="copyClassResult('clsNameResult')" style="display:none; width:100%; margin-top:8px; font-size:0.8rem; background:var(--bg3); border:1px solid var(--bdr);">
+              <i data-lucide="copy" style="width:14px;"></i> Salin Hasil
+            </button>
           </div>
           
           <!-- 2. Pertanyaan Acak -->
@@ -555,6 +555,9 @@
               <i data-lucide="message-circle-question" style="width:16px;"></i> <span data-i18n="cls_q_btn">Tampilkan Pertanyaan</span>
             </button>
             <div class="cls-res-box" id="clsQuestResult" style="font-size:1.1rem; border-color:var(--t4);"></div>
+            <button class="btn" id="clsQuestCopyBtn" onclick="copyClassResult('clsQuestResult')" style="display:none; width:100%; margin-top:8px; font-size:0.8rem; background:var(--bg3); border:1px solid var(--bdr);">
+              <i data-lucide="copy" style="width:14px;"></i> Salin Hasil
+            </button>
           </div>
           
           <!-- 3. Flashcard -->
@@ -599,6 +602,28 @@ Ibu kota Indonesia? | Jakarta
             <div class="cls-res-box" id="clsActResult" style="text-align:center; font-weight:800; font-size:1.2rem; color:var(--acc);"></div>
           </div>
           
+          <!-- Bagi Kelompok -->
+          <div class="card cls-card">
+            <h3 class="cls-card-title" data-i18n="cls_team_title"><i data-lucide="users"></i> Bagi Kelompok</h3>
+            <p class="cls-card-desc" data-i18n="cls_team_desc">Bagi nama-nama dari daftar ke dalam beberapa kelompok.</p>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <span class="d-stg-lbl" style="font-size:0.85rem;" data-i18n="cls_team_qty">Jumlah Kelompok:</span>
+              <button class="btn" style="padding:2px 6px; font-size:0.7rem; height:auto; background:var(--bg3); opacity:0.8; cursor:not-allowed;" disabled>
+                <i data-lucide="clipboard-list" style="width:12px;"></i> Diambil dari Daftar Nama
+              </button>
+            </div>
+            <div class="d-stg-row" style="margin-bottom:12px;">
+              <input class="inp" type="number" id="clsTeamCount" value="2" min="2" max="20" style="width:100%; text-align:center;">
+            </div>
+            <button class="btn btn-g" onclick="pickClassTeams()" style="width:100%; margin-bottom:16px;">
+              <i data-lucide="users" style="width:16px;"></i> <span data-i18n="cls_team_btn">Bagi Kelompok</span>
+            </button>
+            <div id="clsTeamResult" style="display:flex; flex-direction:column; gap:10px;"></div>
+            <button class="btn" id="clsTeamCopyBtn" onclick="copyClassTeamsResult()" style="display:none; width:100%; margin-top:8px; font-size:0.8rem; background:var(--bg3); border:1px solid var(--bdr);">
+              <i data-lucide="copy" style="width:14px;"></i> Salin Hasil
+            </button>
+          </div>
+          
           <!-- 5. Acak Peran -->
           <div class="card cls-card" style="grid-column: 1 / -1;">
             <h3 class="cls-card-title" data-i18n="cls_rl_title"><i data-lucide="theater"></i> Acak Peran</h3>
@@ -623,6 +648,9 @@ Ibu kota Indonesia? | Jakarta
             </button>
             
             <div id="clsRoleResult" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
+            <button class="btn" id="clsRoleCopyBtn" onclick="copyClassRoles()" style="display:none; width:100%; margin-top:8px; font-size:0.8rem; background:var(--bg3); border:1px solid var(--bdr);">
+              <i data-lucide="copy" style="width:14px;"></i> Salin Hasil
+            </button>
           </div>
           
         </div>

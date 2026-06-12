@@ -266,6 +266,58 @@ function updateFlashcardUI() {
   }
 }
 
+// ── 3.5. ACAK AKTIVITAS ──
+function pickClassAct() {
+  const inp = $('clsActInp');
+  if(!inp) return;
+  let list = inp.value.split(/[\n,]+/).map(x => x.trim()).filter(x => x !== '');
+  if(list.length === 0) return typeof msg === 'function' ? msg('Daftar aktivitas kosong!') : alert('Daftar kosong!');
+  
+  const res = $('clsActResult');
+  let ticks = 0;
+  
+  const interval = setInterval(() => {
+    res.innerText = list[Math.floor(cryptoRandom() * list.length)];
+    res.style.opacity = '0.5';
+    if(typeof playTick === 'function') playTick();
+    ticks++;
+    if(ticks >= 15) {
+      clearInterval(interval);
+      let finalAct = list[Math.floor(cryptoRandom() * list.length)];
+      res.innerText = finalAct;
+      res.style.opacity = '1';
+      res.style.color = 'var(--acc)';
+      
+      // Trigger animation
+      res.classList.remove('cls-pop-anim');
+      void res.offsetWidth;
+      res.classList.add('cls-pop-anim');
+      
+      if (typeof playWin === 'function') playWin();
+    }
+  }, 60);
+}
+
+// ── 3.6. CONTOH DATA ──
+function loadSampleData(type) {
+  if (type === 'quest') {
+    const inp = $('clsQuestInp');
+    if (inp) {
+      inp.value = "Apa makanan favoritmu?\nSiapa pahlawan idolamu?\nJika punya kekuatan super, kamu ingin apa?\nApa kenangan masa kecilmu yang paling berkesan?";
+      saveClassData();
+      if(typeof msg === 'function') msg('Contoh pertanyaan dimuat!');
+    }
+  } else if (type === 'role') {
+    const inp = $('clsRoleListInp');
+    if (inp) {
+      inp.value = "Leader\nTimekeeper\nDokumentasi\nPresenter";
+      saveClassData();
+      if(typeof msg === 'function') msg('Contoh peran dimuat!');
+    }
+  }
+}
+
+
 // ── 4. BAGI KELOMPOK ──
 function pickClassTeams() {
   let list = getClassNameList();

@@ -537,3 +537,32 @@ document.addEventListener('DOMContentLoaded', () => {
     loadFlashPreset('umum', true);
   }
 });
+
+function switchClassTab(tabId) {
+  // Hide all sections
+  document.querySelectorAll('.cls-content-section').forEach(el => {
+    el.style.display = 'none';
+    el.classList.remove('on');
+  });
+  
+  // Remove 'on' from all tabs
+  document.querySelectorAll('.cls-tabs .sp-preset-btn').forEach(el => {
+    el.classList.remove('on');
+  });
+  
+  // Show target section
+  const targetSec = document.getElementById('cls-sec-' + tabId);
+  if (targetSec) {
+    targetSec.style.display = 'block';
+    // Small timeout to allow display:block to apply before adding 'on' for potential transition
+    setTimeout(() => {
+      targetSec.classList.add('on');
+    }, 10);
+  }
+  
+  // Highlight target tab
+  const targetTab = document.getElementById('tab-cls-' + tabId);
+  if (targetTab) {
+    targetTab.classList.add('on');
+  }
+}

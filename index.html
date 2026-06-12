@@ -536,9 +536,17 @@
           <p data-i18n="cls_desc">Kumpulan alat interaktif untuk membantu kegiatan belajar mengajar.</p>
         </div>
         
+        <div class="cls-tabs" style="display:flex; overflow-x:auto; gap:8px; margin-bottom:16px; padding-bottom:4px; scrollbar-width:none; -ms-overflow-style:none;">
+          <button class="sp-preset-btn on" id="tab-cls-nama" onclick="switchClassTab('nama')" style="white-space:nowrap; padding:8px 16px;">Pilih Nama</button>
+          <button class="sp-preset-btn" id="tab-cls-tanya" onclick="switchClassTab('tanya')" style="white-space:nowrap; padding:8px 16px;">Pertanyaan</button>
+          <button class="sp-preset-btn" id="tab-cls-flash" onclick="switchClassTab('flash')" style="white-space:nowrap; padding:8px 16px;">Flashcard</button>
+          <button class="sp-preset-btn" id="tab-cls-act" onclick="switchClassTab('act')" style="white-space:nowrap; padding:8px 16px;">Aktivitas</button>
+          <button class="sp-preset-btn" id="tab-cls-peran" onclick="switchClassTab('peran')" style="white-space:nowrap; padding:8px 16px;">Acak Peran</button>
+        </div>
+        
         <div class="cls-grid">
           <!-- 1. Pilih Nama Acak -->
-          <div class="card cls-card">
+          <div class="card cls-card cls-content-section on" id="cls-sec-nama">
             <h3 class="cls-card-title" data-i18n="cls_nm_title"><i data-lucide="user-check"></i> Pilih Nama</h3>
             <p class="cls-card-desc" data-i18n="cls_nm_desc">Pilih satu atau beberapa siswa secara acak dari daftar kelas.</p>
             <textarea class="inp" id="clsNameInp" placeholder="Masukkan nama..." data-i18n-placeholder="cls_nm_inp" style="min-height:80px; margin-bottom:12px; resize:vertical;"></textarea>
@@ -564,7 +572,7 @@
           </div>
           
           <!-- 2. Pertanyaan Acak -->
-          <div class="card cls-card">
+          <div class="card cls-card cls-content-section" id="cls-sec-tanya" style="display:none;">
             <h3 class="cls-card-title" data-i18n="cls_q_title"><i data-lucide="help-circle"></i> Pertanyaan Acak</h3>
             <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:6px; flex-wrap:wrap; margin-bottom:8px;">
               <p class="cls-card-desc" data-i18n="cls_q_desc" style="margin-bottom:0; flex:1;">Berikan pertanyaan secara acak untuk pemanasan atau review.</p>
@@ -584,7 +592,7 @@
           </div>
           
           <!-- 3. Flashcard -->
-          <div class="card cls-card">
+          <div class="card cls-card cls-content-section" id="cls-sec-flash" style="display:none;">
             <h3 class="cls-card-title" data-i18n="cls_fc_title"><i data-lucide="layers"></i> Flashcard Acak</h3>
             <p class="cls-card-desc" data-i18n="cls_fc_desc">Format: Soal | Jawaban. Klik kartu untuk melihat jawaban.</p>
             <textarea class="inp" id="clsFlashInp" placeholder="Contoh:
@@ -623,7 +631,7 @@ Ibu kota Indonesia? | Jakarta
           </div>
           
           <!-- 4. Acak Aktivitas -->
-          <div class="card cls-card">
+          <div class="card cls-card cls-content-section" id="cls-sec-act" style="display:none;">
             <h3 class="cls-card-title" data-i18n="cls_act_title"><i data-lucide="activity"></i> Acak Aktivitas</h3>
             <p class="cls-card-desc" data-i18n="cls_act_desc">Pilih kegiatan energizer atau ice breaking secara instan.</p>
             <textarea class="inp" id="clsActInp" placeholder="Menyanyi, Senam, Menggambar..." data-i18n-placeholder="cls_act_inp" style="min-height:100px; margin-bottom:12px; resize:vertical;"></textarea>
@@ -633,17 +641,8 @@ Ibu kota Indonesia? | Jakarta
             <div class="cls-res-box" id="clsActResult" style="text-align:center; font-weight:800; font-size:1.2rem; color:var(--acc);"></div>
           </div>
           
-          <!-- Bagi Kelompok -->
-          <div class="card cls-card" style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
-            <h3 class="cls-card-title" data-i18n="cls_team_title" style="margin-bottom:8px;"><i data-lucide="users"></i> Bagi Kelompok</h3>
-            <p class="cls-card-desc" style="margin-bottom:16px;">Fitur Bagi Kelompok telah dipindahkan menjadi menu mandiri "Pembagi Tim" agar lebih lengkap dan mudah digunakan.</p>
-            <button class="btn btn-g" onclick="go('tg')" style="width:100%;">
-              Buka Pembagi Tim <i data-lucide="arrow-right" style="width:16px; margin-left:4px;"></i>
-            </button>
-          </div>
-          
           <!-- 5. Acak Peran -->
-          <div class="card cls-card" style="grid-column: 1 / -1;">
+          <div class="card cls-card cls-content-section" id="cls-sec-peran" style="display:none; grid-column: 1 / -1;">
             <h3 class="cls-card-title" data-i18n="cls_rl_title"><i data-lucide="theater"></i> Acak Peran</h3>
             <p class="cls-card-desc" data-i18n="cls_rl_desc">Pasangkan siswa dengan peran spesifik untuk simulasi atau proyek.</p>
             

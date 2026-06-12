@@ -546,7 +546,7 @@ function switchClassTab(tabId) {
   });
   
   // Remove 'on' from all tabs
-  document.querySelectorAll('.cls-tabs .sp-preset-btn').forEach(el => {
+  document.querySelectorAll('.cls-tab-bar .cls-tab-btn').forEach(el => {
     el.classList.remove('on');
   });
   

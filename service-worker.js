@@ -1,4 +1,4 @@
-const CACHE_NAME = 'zlip-v4-clean';
+const CACHE_NAME = 'zlip-v1';
 const urlsToCache = [
   './',
   './index.html',
@@ -71,30 +71,24 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Network-first for HTML pages
-  if (request.mode === 'navigate' || (request.headers.get('accept') || '').includes('text/html')) {
+  // Network-first for HTML, JS, and CSS to ensure updates are fetched
+  if (['document', 'script', 'style'].includes(event.request.destination)) {
     event.respondWith(
-      fetch(request)
+      fetch(event.request)
         .then(response => {
-          const responseToCache = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(request, responseToCache));
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
           return response;
         })
-        .catch(() => {
-          return caches.match(request).then(response => {
-            return response || caches.match('./offline.html');
-          });
-        })
+        .catch(() => caches.match(event.request))
     );
     return;
   }
 
-  // Cache-first for static assets
+  // Cache-first for other assets (images, fonts, etc.)
   event.respondWith(
     caches.match(request).then(cachedResponse => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
+      if (cachedResponse) return cachedResponse;
       return fetch(request).then(response => {
         if (!response || response.status !== 200 || response.type !== 'basic') {
           return response;

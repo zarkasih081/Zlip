@@ -78,7 +78,7 @@
     box-shadow: 0 0 10px var(--acc);
   }
   .sb-i.on .ic { transform: translateY(-4px) scale(1.15); filter: drop-shadow(0 4px 10px rgba(245,158,11,0.6)); }
-  .mn { margin-left: 0; padding: 20px 16px 90px; max-width: 100vw; width: 100%; overflow-x: hidden; }
+  .mn { margin-left: 0; padding: 20px 16px 120px; max-width: 100vw; width: 100%; overflow-x: hidden; }
   
   .home-hero { padding: 30px 16px; }
   .home-hero h1 { font-size: 2rem; }
@@ -90,30 +90,30 @@
    11. TIMER OVERRIDES
 ══════════════════════════════════════ */
 .timer-custom { flex-direction: column; width: 100%; margin-bottom: 16px; }
-.timer-face {
-  margin: 0; transition: all 0.3s ease;
+.tm-container {
+  margin: 24px auto; transition: all 0.3s ease;
 }
-.timer-face.urgent { box-shadow: 0 0 40px rgba(225,29,72,0.3), inset 0 0 20px rgba(225,29,72,0.1); }
-.timer-circle-prog {
+.tm-container.urgent { box-shadow: 0 0 40px rgba(225,29,72,0.3), inset 0 0 20px rgba(225,29,72,0.1); }
+.tm-prog {
   stroke-width: 6; transition: stroke-dashoffset .2s linear;
 }
-.timer-circle-prog.urgent { stroke: var(--rose) !important; filter: drop-shadow(0 0 12px var(--rose)) !important; }
-.timer-display {
+.tm-prog.urgent { stroke: var(--rose) !important; filter: drop-shadow(0 0 12px var(--rose)) !important; }
+.tm-display {
   font-family: 'JetBrains Mono', monospace; font-size: 3.5rem; font-weight: 800;
   letter-spacing: -2px; color: var(--t1); transition: color 0.3s;
 }
-.timer-display.urgent { color: var(--rose); }
-.timer-label {
+.tm-display.urgent { color: var(--rose); }
+.tm-label {
   font-size: .8rem; text-transform: uppercase; letter-spacing: 2px; margin-top: 8px;
 }
-.timer-btns { margin-top: 16px; justify-content: center; width: 100%; }
+.tm-controls { margin-top: 16px; justify-content: center; width: 100%; }
 
 @keyframes alarmPulse {
   0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.7); }
   70% { transform: scale(1.05); box-shadow: 0 0 0 30px rgba(225, 29, 72, 0); }
   100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(225, 29, 72, 0); }
 }
-.timer-face.alarm-active {
+.tm-container.alarm-active {
   animation: alarmPulse 1s infinite;
   border-color: var(--rose);
   background: rgba(225,29,72,0.1);

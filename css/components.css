@@ -558,35 +558,12 @@ textarea.inp { resize: vertical; min-height: 100px; line-height: 1.6 }
 }
 
 /* ══════════════════════════════════════
-   11. TIMER
+   11. TIMER (layout helpers only — visual styles in games.css)
 ══════════════════════════════════════ */
 .timer-presets { display: flex; gap: 7px; flex-wrap: wrap; justify-content: center; margin-bottom: 18px }
 .timer-custom { display: flex; gap: 10px; align-items: center; margin-bottom: 18px; flex-wrap: wrap }
 .timer-custom label { font-size: .75rem; font-weight: 700; color: var(--t2) }
 .timer-custom input[type=number] { width: 70px }
-.timer-face {
-  width: 280px; height: 280px; border-radius: 50%;
-  background: var(--glass); border: 1px solid var(--glass-border);
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  margin: 24px 0; position: relative;
-  box-shadow: var(--shadow), var(--inset-hi);
-}
-.timer-svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg) }
-.timer-circle-bg { fill: none; stroke: var(--glass-border); stroke-width: 3 }
-.timer-circle-prog {
-  fill: none; stroke: url(#timerGrad); stroke-width: 4; stroke-linecap: round;
-  transition: stroke-dashoffset .5s ease; stroke-dasharray: 659; stroke-dashoffset: 659;
-}
-.timer-circle-prog.urgent { stroke: var(--rose) }
-.timer-display {
-  font-family: inherit; font-size: 3rem; font-weight: 900; line-height: 1;
-  position: relative; z-index: 1; letter-spacing: -.5px;
-}
-.timer-label {
-  font-size: .7rem; color: var(--t2); font-weight: 700;
-  text-transform: uppercase; letter-spacing: 1px; position: relative; z-index: 1; margin-top: 4px;
-}
-.timer-btns { display: flex; gap: 12px; margin-top: 4px }
 
 /* ══════════════════════════════════════
    CONFETTI

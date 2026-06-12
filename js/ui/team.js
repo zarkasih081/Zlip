@@ -18,7 +18,7 @@ function buildTeamTaskGroups(tasks, teamCount) {
 }
 
 function getTgAssignableTasks(requiredCount, uniqueOnly) {
-  const tasks = parseTgTasks().sort(() => cryptoRandom() - .5);
+  const tasks = shuffleArray(parseTgTasks());
   if (!tasks.length) return [];
   if (uniqueOnly && tasks.length < requiredCount) {
     msg(t('msg_tg_task_short') || 'Jumlah tugas belum cukup untuk pembagian unik.');
@@ -124,7 +124,7 @@ function genTeams(){
   const tc = Math.max(2, parseInt($('tgCount').value) || 2);
   if(tc > names.length) return msg(t('msg_tg_err_max') || t('msg_tg_err_max'));
 
-  names.sort(() => cryptoRandom() - .5);
+  names = shuffleArray(names);
   
   const taskMode = $('tgTaskMode') ? $('tgTaskMode').value : 'person';
   const uniqueOnly = $('tgUniqueTasks') ? $('tgUniqueTasks').checked : false;

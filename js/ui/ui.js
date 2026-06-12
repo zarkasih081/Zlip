@@ -22,7 +22,7 @@ function msg(m, dur = 2500, iconType = 'info') {
   
   e.innerHTML = `<div style="display:flex;align-items:center;gap:${ic ? '10px' : '0'}">${ic} <span id="toast-text"></span></div>`;
   e.querySelector('#toast-text').textContent = m;
-  lucide.createIcons({ root: e });
+  if (window.lucide) lucide.createIcons({ root: e });
   
   // Re-trigger animation
   e.classList.remove('show');
@@ -47,7 +47,7 @@ function initAmbient() {
   const ctx = cv.getContext('2d');
   let w, h;
   const orbs = [];
-  const ORB_COUNT = 5;
+  const ORB_COUNT = window.innerWidth < 768 ? 3 : 5;
   const COLORS_DARK = ['rgba(0,229,255,.06)','rgba(168,85,247,.05)','rgba(96,165,250,.04)','rgba(34,197,94,.04)','rgba(251,113,133,.04)'];
   const COLORS_LIGHT = ['rgba(0,180,200,.06)','rgba(140,80,220,.04)','rgba(60,130,246,.03)','rgba(34,197,94,.03)','rgba(249,115,22,.03)'];
 

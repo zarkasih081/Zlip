@@ -191,7 +191,7 @@ const I18N = {
     "num_err_range": "The amount of unique numbers exceeds the available range.",
     "tm_applied": "Timer applied.",
     "cls_title": "<i data-lucide=\"graduation-cap\"></i> <span>Class</span> Tools",
-    "cls_desc": "Classroom tools for picking names, questions, flashcards, activities, and roles randomly.",
+    "cls_desc": "Classroom tool to randomly pick names, questions, flashcards, groups, and roles.",
     "cls_nm_title": "<i data-lucide=\"user-check\"></i> Pick Name",
     "cls_nm_desc": "Pick one or more names randomly from a list.",
     "cls_nm_qty": "Amount:",
@@ -209,10 +209,7 @@ const I18N = {
     "cls_fc_hint": "Click the card to reveal the answer",
     "cls_fc_a": "Answer",
     "cls_fc_inp": "Example: What does العلم mean? | Knowledge",
-    "cls_act_title": "<i data-lucide=\"activity\"></i> Random Activity",
-    "cls_act_desc": "Pick a classroom activity or light educational game randomly.",
-    "cls_act_btn": "Pick Activity",
-    "cls_act_inp": "Reading, Answering, Writing, Discussion, Presentation",
+
     "cls_rl_title": "<i data-lucide=\"theater\"></i> Random Roles",
     "cls_rl_desc": "Assign members to specific roles for discussion, projects, or class simulations.",
     "cls_rl_mem": "Members:",
@@ -221,8 +218,7 @@ const I18N = {
     "cls_rl_inp": "Leader, Writer, Speaker, Timekeeper, Questioner, Summarizer",
     "cls_nm_err_emp": "The name list is empty.",
     "cls_nm_err_max": "The amount exceeds the number of names.",
-    "cls_fc_err": "Invalid format. Use: Question | Answer",
-    "cls_act_err": "The activity list is empty."
+    "cls_fc_err": "Invalid format. Use: Question | Answer"
   },
   "id": {
     "nav_home": "Home",
@@ -416,7 +412,7 @@ const I18N = {
     "num_err_range": "Jumlah angka unik melebihi rentang yang tersedia.",
     "tm_applied": "Timer diterapkan.",
     "cls_title": "<i data-lucide=\"graduation-cap\"></i> Menu <span>Kelas</span>",
-    "cls_desc": "Alat bantu kelas untuk memilih nama, pertanyaan, flashcard, aktivitas, dan peran secara acak.",
+    "cls_desc": "Alat bantu kelas untuk memilih nama, pertanyaan, flashcard, kelompok, dan peran secara acak.",
     "cls_nm_title": "<i data-lucide=\"user-check\"></i> Pilih Nama",
     "cls_nm_desc": "Pilih satu atau beberapa nama secara acak dari daftar.",
     "cls_nm_qty": "Jumlah:",
@@ -434,10 +430,7 @@ const I18N = {
     "cls_fc_hint": "Klik kartu untuk melihat jawaban",
     "cls_fc_a": "Jawaban",
     "cls_fc_inp": "Contoh: Apa arti العلم? | Ilmu",
-    "cls_act_title": "<i data-lucide=\"activity\"></i> Acak Aktivitas",
-    "cls_act_desc": "Pilih aktivitas kelas atau game edukasi ringan secara acak.",
-    "cls_act_btn": "Acak Aktivitas",
-    "cls_act_inp": "Membaca, Menjawab, Menulis, Diskusi, Presentasi",
+
     "cls_rl_title": "<i data-lucide=\"theater\"></i> Acak Peran",
     "cls_rl_desc": "Pasangkan anggota dengan peran tertentu untuk diskusi, proyek, atau simulasi kelas.",
     "cls_rl_mem": "Anggota:",
@@ -446,8 +439,7 @@ const I18N = {
     "cls_rl_inp": "Ketua, Penulis, Pembicara, Penjaga Waktu, Penanya, Penyimpul",
     "cls_nm_err_emp": "Daftar nama kosong.",
     "cls_nm_err_max": "Jumlah pilihan melebihi jumlah nama.",
-    "cls_fc_err": "Format salah. Gunakan: Soal | Jawaban",
-    "cls_act_err": "Daftar aktivitas kosong."
+    "cls_fc_err": "Format salah. Gunakan: Soal | Jawaban"
   }
 };
 

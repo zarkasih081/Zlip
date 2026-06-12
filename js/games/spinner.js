@@ -16,7 +16,7 @@ let _spHistory = [];
 function getSpPresets() {
   return {
     food:   { label: t('sp_pre_food_lbl'), items: (t('sp_pre_food_items')||'').split(',') },
-    yesno:  { label: '✅ ' + t('sp_pre_yes') + ' / ' + t('sp_pre_no'), items: [t('sp_pre_yes'),t('sp_pre_no')] },
+    yesno:  { label: t('sp_pre_yes') + ' / ' + t('sp_pre_no'), items: [t('sp_pre_yes'),t('sp_pre_no')] },
     number: { label: t('sp_pre_num_lbl'), items: ['1','2','3','4','5','6','7','8','9','10'] },
     color:  { label: t('sp_pre_color_lbl'), items: (t('sp_pre_color_items')||'').split(',') },
     day:    { label: t('sp_pre_day_lbl'), items: (t('sp_pre_day_items')||'').split(',') },
@@ -461,9 +461,6 @@ function dW() {
   if (['dark'].includes(_sPalette)) {
     hubGrad.addColorStop(0, '#555');
     hubGrad.addColorStop(1, '#111');
-  } else if (_sPalette === 'crystal') {
-    hubGrad.addColorStop(0, '#FFF');
-    hubGrad.addColorStop(1, '#E0FFFF');
   } else if (_sPalette === 'neon') {
     hubGrad.addColorStop(0, '#ff006e');
     hubGrad.addColorStop(1, '#111');
@@ -773,7 +770,7 @@ function initSpinner() {
     _si = storedSp.split('\n').filter(x => x.trim()).map(t => ({text: t, weight: 1, image: ''}));
   }
   
-  _sPalette = getStore('spPalette', 'rainbow');
+  _sPalette = getStore('spPalette', 'default');
   _spElimMode = getStore('spElimMode', false);
   _spStats = getStore('spStats', {});
   
@@ -783,9 +780,13 @@ function initSpinner() {
   
   // Set elimination button state
   const elimBtn = $('elimToggle');
+  const elimText = $('elimToggleText');
   if (elimBtn) {
     elimBtn.classList.toggle('on', _spElimMode);
-    elimBtn.textContent = _spElimMode ? '🎯 Eliminasi: AKTIF' : '🎯 Eliminasi: Nonaktif';
+  }
+  if (elimText) {
+    elimText.innerHTML = _spElimMode ? t('sp_elim_on') : t('sp_elim_off');
+    if (window.lucide) lucide.createIcons({ root: elimText });
   }
   
   // Set palette button state
@@ -820,6 +821,7 @@ function initSpinner() {
 }
 
 function clearSpHist() {
+  _spHistory = [];
   $('spHist').innerHTML = '<span style="color:var(--t3)">—</span>';
   if (typeof playTick === 'function') playTick();
 }

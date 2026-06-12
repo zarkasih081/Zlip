@@ -16,8 +16,41 @@ function switchClassTab(tabId) {
   if (sbContent) sbContent.style.display = 'block';
   
   // Update button state
-  const btn = document.querySelector(`.cls-tab-btn[onclick="switchClassTab('${tabId}')"]`);
+  const btn = document.querySelector(`.cls-tab-btn[data-tab="${tabId}"]`);
   if (btn) btn.classList.add('on');
+}
+
+// ── 0. LOCAL STORAGE ──
+function saveClassData() {
+  localStorage.setItem('zlip_cls_name', $('clsNameInp')?.value || '');
+  localStorage.setItem('zlip_cls_quest', $('clsQuestInp')?.value || '');
+  localStorage.setItem('zlip_cls_flash', $('clsFlashInp')?.value || '');
+  localStorage.setItem('zlip_cls_role_mem', $('clsRoleMemInp')?.value || '');
+  localStorage.setItem('zlip_cls_role_list', $('clsRoleListInp')?.value || '');
+}
+
+function loadClassData() {
+  if (localStorage.getItem('zlip_cls_name')) {
+    const el = $('clsNameInp');
+    if (el) el.value = localStorage.getItem('zlip_cls_name');
+  }
+  if (localStorage.getItem('zlip_cls_quest')) {
+    const el = $('clsQuestInp');
+    if (el) el.value = localStorage.getItem('zlip_cls_quest');
+  }
+  if (localStorage.getItem('zlip_cls_flash')) {
+    const el = $('clsFlashInp');
+    if (el) el.value = localStorage.getItem('zlip_cls_flash');
+  }
+  if (localStorage.getItem('zlip_cls_role_mem')) {
+    const el = $('clsRoleMemInp');
+    if (el) el.value = localStorage.getItem('zlip_cls_role_mem');
+  }
+  if (localStorage.getItem('zlip_cls_role_list')) {
+    const el = $('clsRoleListInp');
+    if (el) el.value = localStorage.getItem('zlip_cls_role_list');
+  }
+  updateClassNameTotal();
 }
 
 // ── 1. PILIH NAMA ──
@@ -27,14 +60,47 @@ function getClassNameList() {
   return inp.value.split(/[\n,]+/).map(x => x.trim()).filter(x => x !== '');
 }
 
-function updateClassNameCount() {
-  const countSpan = $('clsNameCount');
-  if(countSpan) countSpan.innerText = getClassNameList().length;
+function updateClassNameTotal() {
+  const total = getClassNameList().length;
+  const el = $('clsNameTotal');
+  if (el) el.textContent = 'Total nama: ' + total;
 }
 
-if($('clsNameInp')) {
-  $('clsNameInp').addEventListener('input', updateClassNameCount);
+function fillSampleNames() {
+  const inp = $('clsNameInp');
+  if(inp) {
+    inp.value = "Ahmad\nAisyah\nBilal\nFatimah\nHasan\nHusain";
+    updateClassNameTotal();
+    saveClassData();
+  }
 }
+
+async function copyClassResult(elementId) {
+  const el = $(elementId);
+  if (!el) return;
+  const text = el.innerText || el.textContent;
+  if (!text || text.trim() === '') return typeof msg === 'function' ? msg('Belum ada hasil untuk disalin!') : alert('Kosong');
+  
+  const success = typeof copyTextSafe === 'function'
+    ? await copyTextSafe(text)
+    : false;
+    
+  if (typeof msg === 'function') {
+    msg(success ? 'Disalin ke clipboard!' : 'Gagal menyalin');
+  }
+}
+
+function attachClassStorageListeners() {
+  const inputs = ['clsNameInp', 'clsQuestInp', 'clsFlashInp', 'clsRoleMemInp', 'clsRoleListInp'];
+  inputs.forEach(id => {
+    const el = $(id);
+    if (el) el.addEventListener('input', saveClassData);
+  });
+  if($('clsNameInp')) {
+    $('clsNameInp').addEventListener('input', updateClassNameTotal);
+  }
+}
+
 
 function pickClassName() {
   let list = getClassNameList();
@@ -48,45 +114,37 @@ function pickClassName() {
   const res = $('clsNameResult');
   const removeOpt = $('clsNameRemove');
   
-  let ticks = 0;
-  const maxTicks = 20;
-  res.style.transform = 'scale(1.1)';
+  // Langsung eksekusi tanpa interval berlebihan
+  let finalNames = [];
+  let pool = [...list];
+  for(let i=0; i<pickCount; i++) {
+    if(pool.length === 0) break;
+    let rIdx = Math.floor(cryptoRandom() * pool.length);
+    finalNames.push(pool.splice(rIdx, 1)[0]);
+  }
   
-  const interval = setInterval(() => {
-    // Show random visual
-    let temp = [];
-    for(let i=0; i<pickCount; i++){
-      temp.push(list[Math.floor(cryptoRandom() * list.length)]);
-    }
-    res.innerHTML = temp.join('<br>');
-    
-    if(typeof playTick === 'function') playTick();
-    ticks++;
-    if(ticks >= maxTicks) {
-      clearInterval(interval);
-      
-      // Final pick without duplication if possible
-      let finalNames = [];
-      let pool = [...list];
-      for(let i=0; i<pickCount; i++) {
-        if(pool.length === 0) break;
-        let rIdx = Math.floor(cryptoRandom() * pool.length);
-        finalNames.push(pool.splice(rIdx, 1)[0]);
-      }
-      
-      res.innerHTML = finalNames.map(n => `<span style="display:inline-block; padding:4px 8px; margin:4px; background:var(--bg3); border-radius:6px; border:1px solid var(--bdr); font-weight:bold;">${n}</span>`).join('');
-      res.style.transform = 'scale(1)';
-      
-      if(removeOpt && removeOpt.checked) {
-        list = list.filter(n => !finalNames.includes(n));
-        $('clsNameInp').value = list.join('\n');
-        updateClassNameCount();
-      }
-      
-      if (typeof conf === 'function') conf();
-      if (typeof playWin === 'function') playWin();
-    }
-  }, 50);
+  res.innerHTML = '';
+  finalNames.forEach(n => {
+    const span = document.createElement('span');
+    span.className = 'cls-pop-anim';
+    span.style.cssText = 'display:inline-block; padding:4px 8px; margin:4px; background:var(--bg3); border-radius:6px; border:1px solid var(--bdr); font-weight:bold;';
+    span.textContent = n;
+    res.appendChild(span);
+  });
+  res.style.transform = 'scale(1)';
+  
+  const copyBtn = $('clsNameCopyBtn');
+  if(copyBtn) copyBtn.style.display = 'block';
+  
+  if(removeOpt && removeOpt.checked) {
+    list = list.filter(n => !finalNames.includes(n));
+    $('clsNameInp').value = list.join('\n');
+    updateClassNameTotal();
+    saveClassData();
+  }
+  
+
+  if (typeof playWin === 'function') playWin();
 }
 
 // ── 2. PERTANYAAN ACAK ──
@@ -110,6 +168,14 @@ function pickClassQuest() {
       res.innerText = finalQuest;
       res.style.opacity = '1';
       res.style.color = 'var(--acc)';
+      
+      // Trigger animation
+      res.classList.remove('cls-pop-anim');
+      void res.offsetWidth;
+      res.classList.add('cls-pop-anim');
+      
+      const copyBtn = $('clsQuestCopyBtn');
+      if(copyBtn) copyBtn.style.display = 'block';
       
       if (typeof playWin === 'function') playWin();
     }
@@ -136,11 +202,12 @@ const FLASH_PRESETS = {
   ]
 };
 
-function loadFlashPreset(key) {
+function loadFlashPreset(key, silent = false) {
   if (FLASH_PRESETS[key]) {
     $('clsFlashInp').value = FLASH_PRESETS[key].join('\n');
+    saveClassData();
     loadCustomFlashcards();
-    msg('Preset dimuat!');
+    if (!silent && typeof msg === 'function') msg('Preset dimuat!');
   }
 }
 
@@ -154,6 +221,8 @@ function loadCustomFlashcards() {
     let parts = line.split('|');
     return { front: parts[0].trim(), back: parts[1].trim() };
   });
+  
+  if ($('clsFlashCount')) $('clsFlashCount').textContent = `Total kartu: ${_flashcards.length}`;
   
   nextClassFlash();
 }
@@ -193,34 +262,78 @@ function updateFlashcardUI() {
   if (_flashIndex >= 0 && _flashIndex < _flashcards.length) {
     $('clsFlashFront').innerText = _flashcards[_flashIndex].front;
     $('clsFlashBack').innerText = _flashcards[_flashIndex].back;
+    if ($('clsFlashCount')) $('clsFlashCount').textContent = `Kartu ${_flashIndex + 1} dari ${_flashcards.length}`;
   }
 }
 
-// ── 4. ACAK AKTIVITAS ──
-function pickClassAct() {
-  const inp = $('clsActInp');
-  if(!inp) return;
-  let list = inp.value.split(/[\n,]+/).map(x => x.trim()).filter(x => x !== '');
-  if(list.length === 0) return msg(typeof t === 'function' ? (t('cls_act_err') || 'Daftar aktivitas kosong!') : 'Daftar aktivitas kosong!');
+// ── 4. BAGI KELOMPOK ──
+function pickClassTeams() {
+  let list = getClassNameList();
+  if(list.length === 0) return msg('Daftar nama (di tab Pilih Nama) kosong!');
   
-  const res = $('clsActResult');
-  let ticks = 0;
+  const countInp = $('clsTeamCount');
+  let teamCount = countInp ? parseInt(countInp.value) || 2 : 2;
+  if(teamCount < 2) teamCount = 2;
+  if(teamCount > list.length) teamCount = list.length;
   
-  const interval = setInterval(() => {
-    res.innerText = list[Math.floor(cryptoRandom() * list.length)];
-    if(typeof playTick === 'function') playTick();
-    ticks++;
-    if(ticks >= 20) {
-      clearInterval(interval);
-      let finalAct = list[Math.floor(cryptoRandom() * list.length)];
-      res.innerText = finalAct;
-      if (typeof conf === 'function') conf();
-      if (typeof playWin === 'function') playWinPremium();
-    }
-  }, 40);
+  let pool = shuffleArray([...list]);
+  
+  let teams = Array.from({length: teamCount}, () => []);
+  pool.forEach((name, i) => {
+    teams[i % teamCount].push(name);
+  });
+  
+  const res = $('clsTeamResult');
+  res.innerHTML = '';
+  
+  teams.forEach((team, i) => {
+    let div = document.createElement('div');
+    div.className = 'sp-stat-row cls-pop-anim';
+    div.style.padding = '8px 12px';
+    div.style.flexDirection = 'column';
+    div.style.alignItems = 'flex-start';
+    
+    let title = document.createElement('div');
+    title.style.color = 'var(--acc)';
+    title.style.fontWeight = 'bold';
+    title.style.marginBottom = '4px';
+    title.textContent = 'Kelompok ' + (i + 1);
+    
+    let members = document.createElement('div');
+    members.textContent = team.join(', ');
+    
+    div.appendChild(title);
+    div.appendChild(members);
+    res.appendChild(div);
+  });
+  
+  _lastTeamsText = "HASIL PEMBAGIAN KELOMPOK\n\n" + teams.map((t, i) => `Kelompok ${i + 1}:\n${t.join(', ')}`).join('\n\n');
+  
+  const copyBtn = $('clsTeamCopyBtn');
+  if(copyBtn) copyBtn.style.display = 'block';
+  
+  if (typeof conf === 'function') conf();
+  if (typeof playWin === 'function') playWin();
+}
+
+let _lastTeamsText = "";
+async function copyClassTeamsResult() {
+  if (!_lastTeamsText) return;
+  const success = typeof copyTextSafe === 'function' ? await copyTextSafe(_lastTeamsText) : false;
+  if (typeof msg === 'function') msg(success ? 'Disalin ke clipboard!' : 'Gagal menyalin');
 }
 
 // ── 5. ACAK PERAN ──
+function copyNamesToRoles() {
+  const nameInp = $('clsNameInp');
+  const roleMemInp = $('clsRoleMemInp');
+  if (nameInp && roleMemInp) {
+    roleMemInp.value = nameInp.value;
+    saveClassData();
+    if(typeof msg === 'function') msg('Daftar nama berhasil disalin!');
+  }
+}
+
 function assignClassRoles() {
   const memInp = $('clsRoleMemInp');
   const roleInp = $('clsRoleListInp');
@@ -233,38 +346,104 @@ function assignClassRoles() {
   if (roles.length === 0) return msg('Daftar peran kosong!');
   
   // Acak anggota
-  members.sort(() => cryptoRandom() - 0.5);
+  members = shuffleArray(members);
   
   let assignments = [];
   members.forEach((m, i) => {
     let r = roles[i % roles.length];
-    assignments.push(`<strong>${m}</strong> <span style="color:var(--t3)">➔</span> <span style="color:var(--acc)">${r}</span>`);
+    assignments.push({ member: m, role: r });
   });
   
   const res = $('clsRoleResult');
   res.innerHTML = '';
   
   // Tampilkan dengan animasi masuk
-  assignments.forEach((html, i) => {
+  assignments.forEach((assignment, i) => {
     setTimeout(() => {
       let div = document.createElement('div');
-      div.className = 'sp-stat-row';
+      div.className = 'sp-stat-row cls-pop-anim';
       div.style.padding = '8px 12px';
-      div.innerHTML = html;
+      
+      let strong = document.createElement('strong');
+      strong.textContent = assignment.member;
+      
+      let arrow = document.createElement('span');
+      arrow.style.color = 'var(--t3)';
+      arrow.textContent = ' ➔ ';
+      
+      let roleSpan = document.createElement('span');
+      roleSpan.style.color = 'var(--acc)';
+      roleSpan.textContent = assignment.role;
+      
+      div.appendChild(strong);
+      div.appendChild(arrow);
+      div.appendChild(roleSpan);
+      
       res.appendChild(div);
       if(typeof playTick === 'function') playTick();
     }, i * 200);
   });
   
+  _lastRolesText = "HASIL ACAK PERAN\n\n" + assignments.map(a => `${a.member}: ${a.role}`).join("\n");
+
   setTimeout(() => {
     if (typeof playWin === 'function') playWin();
+    const copyBtn = $('clsRoleCopyBtn');
+    if(copyBtn) copyBtn.style.display = 'block';
   }, assignments.length * 200);
+}
+
+let _lastRolesText = "";
+async function copyClassRoles() {
+  if (!_lastRolesText) return;
+  const success = typeof copyTextSafe === 'function' ? await copyTextSafe(_lastRolesText) : false;
+  if (typeof msg === 'function') msg(success ? 'Disalin ke clipboard!' : 'Gagal menyalin');
+}
+
+// ── 6. RESET DATA ──
+function resetClassTab(tab) {
+  if (tab === 'nama') {
+    if($('clsNameInp')) $('clsNameInp').value = '';
+    if($('clsNameResult')) $('clsNameResult').innerHTML = '';
+    if($('clsNameCopyBtn')) $('clsNameCopyBtn').style.display = 'none';
+    updateClassNameTotal();
+  } else if (tab === 'tanya') {
+    if($('clsQuestInp')) $('clsQuestInp').value = '';
+    if($('clsQuestResult')) $('clsQuestResult').innerText = '';
+    if($('clsQuestCopyBtn')) $('clsQuestCopyBtn').style.display = 'none';
+  } else if (tab === 'flash') {
+    if($('clsFlashInp')) $('clsFlashInp').value = '';
+    _flashcards = [];
+    _flashIndex = -1;
+    if($('clsFlashFront')) $('clsFlashFront').innerText = '---';
+    if($('clsFlashBack')) $('clsFlashBack').innerText = '---';
+    if($('clsFlashCount')) $('clsFlashCount').textContent = 'Total kartu: 0';
+  } else if (tab === 'role') {
+    if($('clsRoleMemInp')) $('clsRoleMemInp').value = '';
+    if($('clsRoleListInp')) $('clsRoleListInp').value = '';
+    if($('clsRoleResult')) $('clsRoleResult').innerHTML = '';
+    if($('clsRoleCopyBtn')) $('clsRoleCopyBtn').style.display = 'none';
+    _lastRolesText = '';
+  }
+  saveClassData();
+  if (typeof msg === 'function') msg('Data dibersihkan!');
 }
 
 // Initialize on load
 document.addEventListener('DOMContentLoaded', () => {
-  // Load Default Flashcards on boot
-  if($('clsFlashInp')) {
-    loadFlashPreset('umum');
+  attachClassStorageListeners();
+  loadClassData();
+  
+  // Attach tab listeners
+  document.querySelectorAll('.cls-tab-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const tabId = e.currentTarget.getAttribute('data-tab');
+      if (tabId) switchClassTab(tabId);
+    });
+  });
+
+  // Load Default Flashcards on boot ONLY IF local storage has no flashcards
+  if($('clsFlashInp') && !localStorage.getItem('zlip_cls_flash')) {
+    loadFlashPreset('umum', true);
   }
 });

@@ -10,15 +10,15 @@
   <!-- Open Graph / Social Media -->
   <meta property="og:title" content="Zlip — Multi Randomizer">
   <meta property="og:description" content="Zlip adalah aplikasi randomizer umum dan alat bantu kelas untuk roda acak, dadu, koin, pembagi tim, acak angka, timer, dan aktivitas pembelajaran.">
-  <meta property="og:image" content="https://zlip-randomizer.netlify.app/assets/icons/icon-512.png">
-  <meta property="og:url" content="https://zlip-randomizer.netlify.app/">
+  <meta property="og:image" content="https://zarkasih081.github.io/Zlip/assets/icons/icon-512.png">
+  <meta property="og:url" content="https://zarkasih081.github.io/Zlip/">
   <meta property="og:type" content="website">
   
   <!-- Twitter Cards -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Zlip — Multi Randomizer">
   <meta name="twitter:description" content="Zlip adalah aplikasi randomizer umum dan alat bantu kelas untuk roda acak, dadu, koin, pembagi tim, acak angka, timer, dan aktivitas pembelajaran.">
-  <meta name="twitter:image" content="https://zlip-randomizer.netlify.app/assets/icons/icon-512.png">
+  <meta name="twitter:image" content="https://zarkasih081.github.io/Zlip/assets/icons/icon-512.png">
   
   <!-- PWA Setup -->
   <link rel="manifest" href="manifest.json">
@@ -99,7 +99,7 @@
           <i data-lucide="timer" class="ic"></i><span data-i18n="nav_tm">Timer</span>
         </button>
         <button class="sb-i hide-mobile" data-page="settings" onclick="go('settings')" title="Pengaturan" data-i18n-title="nav_set">
-          <i data-lucide="settings" class="ic"></i><span data-i18n="nav_set">Set</span>
+          <i data-lucide="settings" class="ic"></i><span data-i18n="nav_set">Atur</span>
         </button>
         <button class="sb-i hide-mobile" data-page="dn" onclick="go('dn')" title="Donasi" data-i18n-title="nav_dn">
           <i data-lucide="heart" class="ic"></i><span data-i18n="nav_dn">Donasi</span>
@@ -131,7 +131,7 @@
             <i data-lucide="timer"></i> <span data-i18n="nav_tm">Timer</span>
           </button>
           <button class="drawer-i" onclick="go('settings'); toggleMobileMenu()">
-            <i data-lucide="settings"></i> <span data-i18n="nav_set">Set</span>
+            <i data-lucide="settings"></i> <span data-i18n="nav_set">Atur</span>
           </button>
           <button class="drawer-i" onclick="go('dn'); toggleMobileMenu()">
             <i data-lucide="heart"></i> <span data-i18n="nav_dn">Donasi</span>
@@ -284,7 +284,7 @@
             
             <div class="d-stg-row" style="margin-top:10px;">
               <span class="d-stg-lbl" data-i18n="dc_type">Jenis:</span>
-              <div class="d-type-row" style="flex-wrap:wrap;gap:6px">
+              <div class="d-type-row" id="diceTypeRow" style="flex-wrap:wrap;gap:6px">
                 <button class="d-type-btn on" onclick="setDType(6,this)">D6</button>
                 <button class="d-type-btn" onclick="setDType(4,this)">D4</button>
                 <button class="d-type-btn" onclick="setDType(8,this)">D8</button>
@@ -519,9 +519,15 @@
             <h3 class="cls-card-title" data-i18n="cls_nm_title"><i data-lucide="user-check"></i> Pilih Nama</h3>
             <p class="cls-card-desc" data-i18n="cls_nm_desc">Pilih satu atau beberapa siswa secara acak dari daftar kelas.</p>
             <textarea class="inp" id="clsNameInp" placeholder="Masukkan nama..." data-i18n-placeholder="cls_nm_inp" style="min-height:80px; margin-bottom:12px; resize:vertical;"></textarea>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <span class="d-stg-lbl" style="font-size:0.85rem; flex:1;">Jumlah Kelompok:</span>
+              <button class="btn" style="padding:2px 6px; font-size:0.7rem; height:auto; background:var(--bg3); opacity:0.8; cursor:not-allowed;" disabled>
+                <i data-lucide="clipboard-list" style="width:12px;"></i> Gunakan daftar nama
+              </button>
+            </div>
+            <div style="font-size:0.75rem; color:var(--t3); text-align:right; margin-bottom:12px;">Data kelompok otomatis diambil dari tab Nama.</div>
             <div class="d-stg-row" style="margin-bottom:12px;">
-              <span class="d-stg-lbl" data-i18n="cls_nm_qty">Jumlah:</span>
-              <input class="inp" type="number" id="clsNameCount" value="1" min="1" style="width:60px; text-align:center;">
+              <input class="inp" type="number" id="clsTeamCount" value="2" min="2" max="20" style="width:100%; text-align:center;">
             </div>
             <label class="pw-toggle-lbl" style="margin-bottom:12px;">
               <input type="checkbox" id="clsNameRemove">
@@ -537,7 +543,13 @@
           <!-- 2. Pertanyaan Acak -->
           <div class="card cls-card">
             <h3 class="cls-card-title" data-i18n="cls_q_title"><i data-lucide="help-circle"></i> Pertanyaan Acak</h3>
-            <p class="cls-card-desc" data-i18n="cls_q_desc">Berikan pertanyaan secara acak untuk pemanasan atau review.</p>
+            <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:6px; flex-wrap:wrap; margin-bottom:8px;">
+              <p class="cls-card-desc" data-i18n="cls_q_desc" style="margin-bottom:0; flex:1;">Berikan pertanyaan secara acak untuk pemanasan atau review.</p>
+              <div style="display:flex; gap:6px;">
+                <button class="btn" style="padding:2px 8px; font-size:0.7rem; height:auto; background:var(--bg3);" onclick="loadSampleData('quest')"><i data-lucide="flask-conical" style="width:12px;"></i> Contoh</button>
+                <button class="btn" style="padding:2px 8px; font-size:0.7rem; height:auto; background:var(--rose); color:white;" onclick="resetClassTab('tanya')"><i data-lucide="trash-2" style="width:12px;"></i> Reset</button>
+              </div>
+            </div>
             <textarea class="inp" id="clsQuestInp" placeholder="Masukkan daftar pertanyaan..." data-i18n-placeholder="cls_q_inp" style="min-height:100px; margin-bottom:12px; resize:vertical;"></textarea>
             <button class="btn btn-p" onclick="pickClassQuest()" style="width:100%; margin-bottom:16px;">
               <i data-lucide="message-circle-question" style="width:16px;"></i> <span data-i18n="cls_q_btn">Tampilkan Pertanyaan</span>
@@ -552,22 +564,27 @@
             <textarea class="inp" id="clsFlashInp" placeholder="Contoh:
 Ibu kota Indonesia? | Jakarta
 1 + 1 = ? | 2" data-i18n-placeholder="cls_fc_inp" style="min-height:80px; margin-bottom:12px; resize:vertical; font-family:monospace;"></textarea>
-            <button class="btn btn-r" onclick="nextClassFlash()" style="width:100%; margin-bottom:16px;">
-              <i data-lucide="refresh-cw" style="width:16px;"></i> <span data-i18n="cls_fc_btn">Ambil Kartu Baru</span>
-            </button>
-            
-            <div class="cls-flashcard-wrap" onclick="flipClassFlash()">
+            <div class="cls-flashcard-wrap" onclick="flipClassFlash()" style="margin-top:16px;">
               <div class="cls-flashcard" id="clsFlashCard">
                 <div class="cls-fc-face cls-fc-front">
                   <div class="cls-fc-badge" data-i18n="cls_fc_q">Soal</div>
                   <div id="clsFlashFront">---</div>
-                  <div class="cls-fc-hint" data-i18n="cls_fc_hint">(Klik untuk membalik)</div>
+                  <div class="cls-fc-hint" data-i18n="cls_fc_hint">(Klik kartu untuk membalik)</div>
                 </div>
                 <div class="cls-fc-face cls-fc-back">
                   <div class="cls-fc-badge" style="background:var(--rose);" data-i18n="cls_fc_a">Jawaban</div>
                   <div id="clsFlashBack">---</div>
                 </div>
               </div>
+            </div>
+            
+            <div style="display:flex; gap:8px; margin-top:12px;">
+              <button class="btn btn-r" onclick="nextClassFlash()" style="flex:1; font-size:0.9rem;">
+                <i data-lucide="shuffle" style="width:16px;"></i> Acak Kartu
+              </button>
+              <button class="btn btn-p" onclick="flipClassFlash()" style="flex:1; font-size:0.9rem;">
+                <i data-lucide="repeat" style="width:16px;"></i> Balik Kartu
+              </button>
             </div>
           </div>
           
@@ -593,7 +610,10 @@ Ibu kota Indonesia? | Jakarta
                 <textarea class="inp" id="clsRoleMemInp" style="min-height:100px;"></textarea>
               </div>
               <div>
-                <div class="lbl" style="font-size:0.8rem; margin-bottom:4px;" data-i18n="cls_rl_list">Daftar Peran</div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                  <span class="lbl" style="font-size:0.8rem; margin-bottom:0;" data-i18n="cls_rl_list">Daftar Peran</span>
+                  <button class="btn" style="padding:2px 8px; font-size:0.7rem; height:auto; background:var(--bg3);" onclick="loadSampleData('role')"><i data-lucide="flask-conical" style="width:12px;"></i> Contoh</button>
+                </div>
                 <textarea class="inp" id="clsRoleListInp" placeholder="Dokter, Polisi, Guru..." data-i18n-placeholder="cls_rl_inp" style="min-height:100px;"></textarea>
               </div>
             </div>
@@ -654,6 +674,13 @@ Ibu kota Indonesia? | Jakarta
                 <label style="font-size:0.8rem; color:var(--t2); margin-bottom:4px; display:block;" data-i18n="tm_s">Detik:</label>
                 <input class="inp" type="number" id="tmS" value="0" min="0" max="59" style="text-align:center;">
               </div>
+            </div>
+            
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+              <span class="lbl" style="margin:0; font-size:0.8rem; color:var(--t2);">Alarm Suara & Getar</span>
+              <label class="pw-toggle-lbl" style="margin:0;">
+                <input type="checkbox" id="tmSoundToggle" checked onchange="toggleTimerSound()"> Aktif
+              </label>
             </div>
             
             <button class="btn btn-p" onclick="timerApply()" style="width:100%; margin-bottom:20px;">

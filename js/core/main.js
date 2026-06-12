@@ -11,6 +11,15 @@ function cryptoRandom() {
   return Math.random();
 }
 
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(cryptoRandom() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 async function copyTextSafe(text) {
   try {
     if (navigator.clipboard && window.isSecureContext) {
@@ -206,12 +215,15 @@ window.onload = () => {
               `;
               const m = typeof t === 'function' ? (t('msg_update') || 'Pembaruan tersedia!') : 'Pembaruan tersedia!';
               banner.innerHTML = `
-                <span style="font-weight:600">🔄 ${m}</span>
+                <span style="font-weight:600; display:flex; align-items:center; gap:6px;">
+                  <i data-lucide="refresh-cw" style="width:16px;"></i> ${m}
+                </span>
                 <button onclick="location.reload()" style="background:white;color:var(--acc);border:0;padding:8px 16px;border-radius:4px;cursor:pointer;font-weight:700;">
                   Refresh
                 </button>
               `;
               document.body.appendChild(banner);
+              if (typeof lucide !== 'undefined') lucide.createIcons();
             }
           };
         };

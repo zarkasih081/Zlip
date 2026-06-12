@@ -2,6 +2,11 @@
 //  STORAGE & GLOBAL STATE
 // ═══════════════════════════════════════════
 const STORAGE_PREFIX = 'zl_';
+const EXTRA_PREFIXES = ['zlip_cls_'];
+
+function isZlipKey(key) {
+  return key.startsWith(STORAGE_PREFIX) || EXTRA_PREFIXES.some(p => key.startsWith(p));
+}
 
 function getStore(k, d) {
   try {
@@ -48,7 +53,7 @@ function exportData() {
   const data = {};
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
-    if (key.startsWith(STORAGE_PREFIX)) {
+    if (isZlipKey(key)) {
       data[key] = localStorage.getItem(key);
     }
   }
@@ -68,7 +73,7 @@ function importData(file) {
     try {
       const data = JSON.parse(e.target.result);
       for (const key in data) {
-        if (key.startsWith(STORAGE_PREFIX)) {
+        if (isZlipKey(key)) {
           localStorage.setItem(key, data[key]);
         }
       }
@@ -85,7 +90,7 @@ function resetAllData() {
   const doReset = () => {
     const keys = [];
     for (let i = 0; i < localStorage.length; i++) {
-      if (localStorage.key(i).startsWith(STORAGE_PREFIX)) {
+      if (isZlipKey(localStorage.key(i))) {
         keys.push(localStorage.key(i));
       }
     }

@@ -3,7 +3,13 @@
 // ═══════════════════════════════════════════
 let _tmTotal=0, _tmLeft=0, _tmInterval=null, _tmRunning=false;
 let _tmAlarmInt=null;
-const CIRC=2*Math.PI*105;
+let _tmSoundEnabled = true;
+const CIRC=2*Math.PI*90;
+
+function toggleTimerSound() {
+  const chk = document.getElementById('tmSoundToggle');
+  if (chk) _tmSoundEnabled = chk.checked;
+}
 
 function setTimer(h = 0, m = 0, s = 0) {
   stopTimerAlarm();
@@ -72,7 +78,7 @@ function timerToggle(){
       const pct = _tmTotal>0 ? (_tmLeft/_tmTotal) : 1;
       if(pct <= 0.25 && _tmLeft > 0 && typeof playTick === 'function') {
         // Play tick sound when urgent
-        if(_tmLeft % 2 === 0) playTick();
+        if(_tmLeft % 2 === 0 && _tmSoundEnabled) playTick();
       }
       
       if(_tmLeft<=0){ 
@@ -94,36 +100,47 @@ function timerToggle(){
 }
 
 function startTimerAlarm() {
-  const face = document.querySelector('.timer-face');
+  const face = document.querySelector('.tm-container');
   if(face) face.classList.add('alarm-active');
   
   $('tmStart').style.display = 'none';
   $('tmStopAlarm').style.display = 'block';
   
-  // Play win sound repeatedly
-  if(typeof playWin === 'function') playWin();
-  _tmAlarmInt = setInterval(() => {
+  if (_tmSoundEnabled) {
     if(typeof playWin === 'function') playWin();
-  }, 1200);
+    if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
+    _tmAlarmInt = setInterval(() => {
+      if(typeof playWin === 'function') playWin();
+      if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
+    }, 1200);
+  } else {
+    // visual blink only
+    _tmAlarmInt = setInterval(() => {}, 1200);
+  }
   
   msg(t('msg_tm_timeup'), 3000);
   if (typeof announceA11y === 'function') announceA11y('Waktu habis!');
 }
 
 function stopTimerAlarm() {
+  const hadAlarm = !!_tmAlarmInt;
+
   if(_tmAlarmInt) {
     clearInterval(_tmAlarmInt);
     _tmAlarmInt = null;
   }
-  const face = document.querySelector('.timer-face');
+
+  const face = document.querySelector('.tm-container');
   if(face) face.classList.remove('alarm-active');
-  
+
   const tmStart = $('tmStart');
   const tmStopAlarm = $('tmStopAlarm');
   if(tmStart) tmStart.style.display = 'block';
   if(tmStopAlarm) tmStopAlarm.style.display = 'none';
-  
-  $('tmLabel').textContent=t('tm_status_done');
+
+  if (hadAlarm && $('tmLabel')) {
+    $('tmLabel').textContent = t('tm_status_done');
+  }
 }
 
 function timerReset(){ 
@@ -154,7 +171,7 @@ function renderTimer(){
     : `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
     
   const prog=$('tmProg');
-  const face=document.querySelector('.timer-face');
+  const face=document.querySelector('.tm-container');
   const disp=$('tmDisplay');
   
   if(prog) {

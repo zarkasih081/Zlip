@@ -21,10 +21,10 @@ function adjDice(d){
 
 function setDType(t, btn){ 
   _dType = t; 
-  document.querySelectorAll('.d-type-row .d-type-btn').forEach(b => b.classList.remove('on')); 
+  document.querySelectorAll('#diceTypeRow .d-type-btn').forEach(b => b.classList.remove('on')); 
   if(btn) btn.classList.add('on'); 
-  else {
-    let b = Array.from(document.querySelectorAll('.d-type-row .d-type-btn')).find(el => el.textContent === `D${t}`);
+  if (!btn) {
+    let b = Array.from(document.querySelectorAll('#diceTypeRow .d-type-btn')).find(el => el.textContent === `D${t}`);
     if(b) b.classList.add('on');
   }
   updateIdleDice();

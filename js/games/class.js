@@ -27,6 +27,7 @@ function saveClassData() {
   localStorage.setItem('zlip_cls_flash', $('clsFlashInp')?.value || '');
   localStorage.setItem('zlip_cls_role_mem', $('clsRoleMemInp')?.value || '');
   localStorage.setItem('zlip_cls_role_list', $('clsRoleListInp')?.value || '');
+  localStorage.setItem('zlip_cls_act', $('clsActInp')?.value || '');
 }
 
 function loadClassData() {
@@ -49,6 +50,10 @@ function loadClassData() {
   if (localStorage.getItem('zlip_cls_role_list')) {
     const el = $('clsRoleListInp');
     if (el) el.value = localStorage.getItem('zlip_cls_role_list');
+  }
+  if (localStorage.getItem('zlip_cls_act')) {
+    const el = $('clsActInp');
+    if (el) el.value = localStorage.getItem('zlip_cls_act');
   }
   updateClassNameTotal();
 }
@@ -75,14 +80,22 @@ function fillSampleNames() {
   }
 }
 
-async function copyClassResult(elementId) {
+async function copyClassResult(elementId, title) {
   const el = $(elementId);
   if (!el) return;
-  const text = el.innerText || el.textContent;
+  let text = el.innerText || el.textContent;
   if (!text || text.trim() === '') return typeof msg === 'function' ? msg('Belum ada hasil untuk disalin!') : alert('Kosong');
   
+  if (elementId === 'clsNameResult') {
+     const spans = Array.from(el.querySelectorAll('span'));
+     if(spans.length > 0) text = spans.map(s => s.textContent).join('\n');
+  }
+  
+  const finalTitle = title || 'HASIL UNDIAN';
+  const finalText = `*${finalTitle}*\n\n${text}`;
+  
   const success = typeof copyTextSafe === 'function'
-    ? await copyTextSafe(text)
+    ? await copyTextSafe(finalText)
     : false;
     
   if (typeof msg === 'function') {
@@ -91,7 +104,7 @@ async function copyClassResult(elementId) {
 }
 
 function attachClassStorageListeners() {
-  const inputs = ['clsNameInp', 'clsQuestInp', 'clsFlashInp', 'clsRoleMemInp', 'clsRoleListInp'];
+  const inputs = ['clsNameInp', 'clsQuestInp', 'clsFlashInp', 'clsRoleMemInp', 'clsRoleListInp', 'clsActInp'];
   inputs.forEach(id => {
     const el = $(id);
     if (el) el.addEventListener('input', saveClassData);
@@ -227,7 +240,18 @@ function loadCustomFlashcards() {
   nextClassFlash();
 }
 
-function nextClassFlash() {
+function prevClassFlash() {
+  if (_flashcards.length === 0) return;
+  _flashIndex--;
+  if (_flashIndex < 0) _flashIndex = _flashcards.length - 1;
+  _isFlashFront = true;
+  updateFlashcardUI();
+  
+  const card = $('clsFlashCard');
+  if(card) card.style.transform = 'rotateY(0deg)';
+}
+
+function nextClassFlash(ordered = false) {
   const inp = $('clsFlashInp');
   if(!inp) return;
   const lines = inp.value.split('\n').map(x => x.trim()).filter(x => x.includes('|'));
@@ -238,7 +262,21 @@ function nextClassFlash() {
     return { front: parts[0].trim(), back: parts[1].trim() };
   });
 
-  _flashIndex = Math.floor(cryptoRandom() * _flashcards.length);
+  if (ordered) {
+    _flashIndex++;
+    if (_flashIndex >= _flashcards.length) _flashIndex = 0;
+  } else {
+    let nextIdx = _flashIndex;
+    if (_flashcards.length > 1) {
+      while(nextIdx === _flashIndex) {
+        nextIdx = Math.floor(cryptoRandom() * _flashcards.length);
+      }
+    } else {
+      nextIdx = 0;
+    }
+    _flashIndex = nextIdx;
+  }
+  
   _isFlashFront = true;
   updateFlashcardUI();
   
@@ -359,7 +397,7 @@ function pickClassTeams() {
     res.appendChild(div);
   });
   
-  _lastTeamsText = "HASIL PEMBAGIAN KELOMPOK\n\n" + teams.map((t, i) => `Kelompok ${i + 1}:\n${t.join(', ')}`).join('\n\n');
+  _lastTeamsText = "*HASIL PEMBAGIAN KELOMPOK*\n\n" + teams.map((t, i) => `*Kelompok ${i + 1}:*\n${t.join(', ')}`).join('\n\n');
   
   const copyBtn = $('clsTeamCopyBtn');
   if(copyBtn) copyBtn.style.display = 'block';
@@ -436,7 +474,7 @@ function assignClassRoles() {
     }, i * 200);
   });
   
-  _lastRolesText = "HASIL ACAK PERAN\n\n" + assignments.map(a => `${a.member}: ${a.role}`).join("\n");
+  _lastRolesText = "*HASIL ACAK PERAN*\n\n" + assignments.map(a => `*${a.member}* ➔ ${a.role}`).join("\n");
 
   setTimeout(() => {
     if (typeof playWin === 'function') playWin();

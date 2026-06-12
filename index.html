@@ -31,10 +31,7 @@
   <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
 
   <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/fonts.css">
 
   <title>Zlip — Multi Randomizer</title>
   <link rel="stylesheet" href="css/base.css">
@@ -216,10 +213,10 @@
             <!-- Color Themes -->
             <div class="lbl" data-i18n="sp_color_lbl">Tema Warna</div>
             <div class="d-type-row" id="spColorRow" style="flex-wrap:wrap;gap:6px">
-              <button class="d-type-btn on" onclick="setSpColor(\'default\',this)">Default</button>
-              <button class="d-type-btn" onclick="setSpColor(\'neon\',this)">Neon</button>
-              <button class="d-type-btn" onclick="setSpColor(\'gold\',this)">Gold</button>
-              <button class="d-type-btn" onclick="setSpColor(\'dark\',this)">Dark</button>
+              <button class="d-type-btn on" onclick="setSpColor('default',this)">Default</button>
+              <button class="d-type-btn" onclick="setSpColor('neon',this)">Neon</button>
+              <button class="d-type-btn" onclick="setSpColor('gold',this)">Gold</button>
+              <button class="d-type-btn" onclick="setSpColor('dark',this)">Dark</button>
             </div>
             <div class="sep"></div>
                         <!-- History -->
@@ -363,10 +360,16 @@
               </div>
             </div>
             
+            <label class="pw-toggle-lbl" style="margin-top:12px;">
+              <input type="checkbox" id="cLightToggle" onchange="toggleCoinLightMode()">
+              <span class="pw-toggle-btn"><i data-lucide="check" style="width:14px;height:14px;"></i></span>
+              <span data-i18n="cn_light_mode">Mode Ringan (Tanpa 3D)</span>
+            </label>
+            
             <div class="sep"></div>
             
             <!-- Overall Stats -->
-            <div class="lbl" data-i18n="cn_stat_lbl">Statistik Sesi</div>
+            <div class="lbl" data-i18n="cn_stat_lbl">Statistik (Hanya Sesi Ini)</div>
             <div class="sp-stats-container" style="margin-top:0">
               <div class="sp-stat-row">
                 <div class="sp-stat-name" data-i18n="cn_head">Gambar</div>
@@ -432,6 +435,12 @@
               <input class="inp" type="number" id="tgCount" value="2" min="2" max="20" style="flex:1; text-align:center;">
             </div>
 
+            <label class="pw-toggle-lbl" style="margin-bottom:12px;">
+              <input type="checkbox" id="tgRemoveDup">
+              <span class="pw-toggle-btn"><i data-lucide="check" style="width:14px;height:14px;"></i></span>
+              <span data-i18n="tg_rem_dup">Hapus nama duplikat</span>
+            </label>
+
             <div class="sep"></div>
 
             <div class="lbl" data-i18n="tg_task_lbl">Pembagian Tugas (Opsional)</div>
@@ -478,6 +487,9 @@
             
             <div style="display:flex;gap:10px;justify-content:center;margin-bottom:16px;">
               <button class="btn btn-g" onclick="generateNumber()" id="btnNumGen" style="min-width:180px"><span data-i18n="num_btn"><i data-lucide="hash" style="width:18px"></i> Acak Angka</span></button>
+              <button class="btn" id="btnNumCopy" onclick="copyNumResult()" style="display:none; background:var(--bg3); color:var(--t1); border:1px solid var(--bdr);" title="Salin Hasil">
+                <i data-lucide="copy" style="width:18px"></i>
+              </button>
             </div>
           </div>
           
@@ -502,6 +514,17 @@
               <span class="pw-toggle-btn"><i data-lucide="check" style="width:14px;height:14px;"></i></span>
               <span data-i18n="num_dup">Boleh berulang</span>
             </label>
+            
+            <div class="sep"></div>
+            
+            <!-- History -->
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <div class="lbl" data-i18n="num_hist_lbl" style="margin:0;">Riwayat</div>
+              <button class="sp-stat-reset" onclick="clearNumHist()"><i data-lucide="rotate-ccw" style="width:12px;height:12px"></i> <span data-i18n="sp_reset">Reset</span></button>
+            </div>
+            <div class="sp-hist-wrap" id="numHist" style="max-height:150px;overflow-y:auto;align-items:flex-start;align-content:flex-start">
+              <span style="color:var(--t3)">—</span>
+            </div>
           </div>
         </div>
       </div>
@@ -535,7 +558,7 @@
               <i data-lucide="check-circle" style="width:16px;"></i> <span data-i18n="cls_nm_btn">Pilih Nama</span>
             </button>
             <div class="cls-res-box" id="clsNameResult"></div>
-            <button class="btn" id="clsNameCopyBtn" onclick="copyClassResult('clsNameResult')" style="display:none; width:100%; margin-top:8px; font-size:0.8rem; background:var(--bg3); border:1px solid var(--bdr);">
+            <button class="btn" id="clsNameCopyBtn" onclick="copyClassResult('clsNameResult', 'NAMA TERPILIH')" style="display:none; width:100%; margin-top:8px; font-size:0.8rem; background:var(--bg3); border:1px solid var(--bdr);">
               <i data-lucide="copy" style="width:14px;"></i> Salin Hasil
             </button>
           </div>
@@ -555,7 +578,7 @@
               <i data-lucide="message-circle-question" style="width:16px;"></i> <span data-i18n="cls_q_btn">Tampilkan Pertanyaan</span>
             </button>
             <div class="cls-res-box" id="clsQuestResult" style="font-size:1.1rem; border-color:var(--t4);"></div>
-            <button class="btn" id="clsQuestCopyBtn" onclick="copyClassResult('clsQuestResult')" style="display:none; width:100%; margin-top:8px; font-size:0.8rem; background:var(--bg3); border:1px solid var(--bdr);">
+            <button class="btn" id="clsQuestCopyBtn" onclick="copyClassResult('clsQuestResult', 'PERTANYAAN ACAK')" style="display:none; width:100%; margin-top:8px; font-size:0.8rem; background:var(--bg3); border:1px solid var(--bdr);">
               <i data-lucide="copy" style="width:14px;"></i> Salin Hasil
             </button>
           </div>
@@ -582,6 +605,14 @@ Ibu kota Indonesia? | Jakarta
             </div>
             
             <div style="display:flex; gap:8px; margin-top:12px;">
+              <button class="btn" onclick="prevClassFlash()" style="flex:1; font-size:0.9rem; background:var(--bg3); border:1px solid var(--bdr); color:var(--t1);">
+                <i data-lucide="arrow-left" style="width:16px;"></i> Prev
+              </button>
+              <button class="btn" onclick="nextClassFlash(true)" style="flex:1; font-size:0.9rem; background:var(--bg3); border:1px solid var(--bdr); color:var(--t1);">
+                Next <i data-lucide="arrow-right" style="width:16px;"></i>
+              </button>
+            </div>
+            <div style="display:flex; gap:8px; margin-top:8px;">
               <button class="btn btn-r" onclick="nextClassFlash()" style="flex:1; font-size:0.9rem;">
                 <i data-lucide="shuffle" style="width:16px;"></i> Acak Kartu
               </button>
@@ -603,24 +634,11 @@ Ibu kota Indonesia? | Jakarta
           </div>
           
           <!-- Bagi Kelompok -->
-          <div class="card cls-card">
-            <h3 class="cls-card-title" data-i18n="cls_team_title"><i data-lucide="users"></i> Bagi Kelompok</h3>
-            <p class="cls-card-desc" data-i18n="cls_team_desc">Bagi nama-nama dari daftar ke dalam beberapa kelompok.</p>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-              <span class="d-stg-lbl" style="font-size:0.85rem;" data-i18n="cls_team_qty">Jumlah Kelompok:</span>
-              <button class="btn" style="padding:2px 6px; font-size:0.7rem; height:auto; background:var(--bg3); opacity:0.8; cursor:not-allowed;" disabled>
-                <i data-lucide="clipboard-list" style="width:12px;"></i> Diambil dari Daftar Nama
-              </button>
-            </div>
-            <div class="d-stg-row" style="margin-bottom:12px;">
-              <input class="inp" type="number" id="clsTeamCount" value="2" min="2" max="20" style="width:100%; text-align:center;">
-            </div>
-            <button class="btn btn-g" onclick="pickClassTeams()" style="width:100%; margin-bottom:16px;">
-              <i data-lucide="users" style="width:16px;"></i> <span data-i18n="cls_team_btn">Bagi Kelompok</span>
-            </button>
-            <div id="clsTeamResult" style="display:flex; flex-direction:column; gap:10px;"></div>
-            <button class="btn" id="clsTeamCopyBtn" onclick="copyClassTeamsResult()" style="display:none; width:100%; margin-top:8px; font-size:0.8rem; background:var(--bg3); border:1px solid var(--bdr);">
-              <i data-lucide="copy" style="width:14px;"></i> Salin Hasil
+          <div class="card cls-card" style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+            <h3 class="cls-card-title" data-i18n="cls_team_title" style="margin-bottom:8px;"><i data-lucide="users"></i> Bagi Kelompok</h3>
+            <p class="cls-card-desc" style="margin-bottom:16px;">Fitur Bagi Kelompok telah dipindahkan menjadi menu mandiri "Pembagi Tim" agar lebih lengkap dan mudah digunakan.</p>
+            <button class="btn btn-g" onclick="go('tg')" style="width:100%;">
+              Buka Pembagi Tim <i data-lucide="arrow-right" style="width:16px; margin-left:4px;"></i>
             </button>
           </div>
           
@@ -744,6 +762,13 @@ Ibu kota Indonesia? | Jakarta
             <button class="dn-nominal-btn on" onclick="setNominal(10000, this)">Rp10.000</button>
             <button class="dn-nominal-btn" onclick="setNominal(25000, this)">Rp25.000</button>
             <button class="dn-nominal-btn" onclick="setNominal(50000, this)">Rp50.000</button>
+          </div>
+          <div style="font-size:0.8rem; color:var(--t3); margin-top:12px; text-align:center;" data-i18n="dn_nom_info">*(Pilihan nominal hanya sebagai referensi, Anda perlu memasukkannya secara manual di halaman Saweria)*</div>
+          
+          <div class="qris-placeholder" style="margin-top:24px; padding:20px; background:var(--bg3); border:2px dashed var(--bdr); border-radius:12px; text-align:center;">
+            <i data-lucide="qr-code" style="width:48px; height:48px; color:var(--t3); margin-bottom:8px;"></i>
+            <div style="font-weight:600; color:var(--t2);" data-i18n="dn_qris_title">Scan QRIS</div>
+            <div style="font-size:0.8rem; color:var(--t3);" data-i18n="dn_qris_desc">Gunakan aplikasi M-Banking atau E-Wallet<br>untuk melakukan scan (Segera Hadir)</div>
           </div>
           
           <div style="display:flex; flex-direction:column; gap:12px; margin-top:24px;">

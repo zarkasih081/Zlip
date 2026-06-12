@@ -1,4 +1,4 @@
-const CACHE_NAME = 'zlip-v1';
+const CACHE_NAME = 'zlip-v2';
 const urlsToCache = [
   './',
   './index.html',
@@ -9,6 +9,16 @@ const urlsToCache = [
   './css/components.css',
   './css/games.css',
   './css/responsive.css',
+  './css/fonts.css',
+  './assets/fonts/plus-jakarta-sans-regular.woff2',
+  './assets/fonts/plus-jakarta-sans-medium.woff2',
+  './assets/fonts/plus-jakarta-sans-semibold.woff2',
+  './assets/fonts/plus-jakarta-sans-bold.woff2',
+  './assets/fonts/plus-jakarta-sans-extrabold.woff2',
+  './assets/fonts/plus-jakarta-sans-black.woff2',
+  './assets/fonts/jetbrains-mono-medium.woff2',
+  './assets/fonts/jetbrains-mono-bold.woff2',
+  './assets/fonts/jetbrains-mono-extrabold.woff2',
   './assets/images/coin-heads.webp',
   './assets/images/coin-tails.webp',
   './assets/images/logo.webp',
@@ -80,7 +90,13 @@ self.addEventListener('fetch', event => {
           caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
           return response;
         })
-        .catch(() => caches.match(event.request))
+        .catch(async () => {
+          const cached = await caches.match(event.request);
+          if (cached) return cached;
+          if (event.request.destination === 'document') {
+            return caches.match('./offline.html');
+          }
+        })
     );
     return;
   }

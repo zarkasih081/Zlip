@@ -57,7 +57,7 @@ function loadSpPreset(key) {
   const presets = getSpPresets();
   const preset = presets[key];
   if (!preset) return;
-  _si = preset.items.map(t => ({text: t, weight: 1, image: ''}));
+  _si = preset.items.map(t => ({text: t, weight: 1}));
   renderSpList();
   msg(`Preset "${preset.label}" loaded!`);
 }
@@ -143,14 +143,13 @@ function renderSpList() {
     
     const textVal = item.text || '';
     const weightVal = item.weight || 1;
-    const imgVal = item.image || '';
     
     row.innerHTML = `
       <div style="display:flex; width:100%; gap:8px; align-items:center;">
         <div class="sp-item-color" style="background:${color}; flex-shrink:0;"></div>
         <input type="text" class="sp-item-text" style="flex:1" placeholder="Nama opsi...">
         <div style="display:flex; align-items:center; gap:4px; flex-shrink:0;">
-          <span style="font-size:0.65rem; color:var(--t3); font-weight:700;">BOBOT:</span>
+          <span style="font-size:0.65rem; color:var(--t3); font-weight:700;" title="Semakin besar bobot, semakin luas area opsi di roda">BOBOT:</span>
           <input type="number" class="inp sp-item-weight" min="1" max="100" title="Bobot Peluang" style="width:48px; padding:4px; font-size:0.75rem; text-align:center;">
         </div>
         <button class="sp-item-del" style="flex-shrink:0;"><i data-lucide="trash-2" style="width:16px;height:16px"></i></button>
@@ -159,7 +158,7 @@ function renderSpList() {
     
     const textInput = row.querySelector('.sp-item-text');
     textInput.value = textVal;
-    textInput.addEventListener('change', (e) => updSpItem(i, 'text', e.target.value));
+    textInput.addEventListener('input', (e) => updSpItem(i, 'text', e.target.value));
     
     const delBtn = row.querySelector('.sp-item-del');
     delBtn.addEventListener('click', () => delSpItem(i));
@@ -172,7 +171,7 @@ function renderSpList() {
   });
   if (window.lucide) lucide.createIcons({ root: list });
   setStore('sp_v2', _si);
-  loadImagesAndDraw();
+  if (typeof dW === 'function') dW();
 }
 
 function updSpItem(idx, field, val) {
@@ -183,20 +182,9 @@ function updSpItem(idx, field, val) {
   if (field === 'text') {
     val = String(val).trim().substring(0, 50);
   }
-  if (field === 'image') {
-    val = String(val).trim();
-    if (val) {
-      try { new URL(val); } 
-      catch { val = ''; }
-    }
-  }
   _si[idx][field] = val;
   setStore('sp_v2', _si);
-  if (field === 'image') {
-    loadImagesAndDraw();
-  } else {
-    if (typeof dW === 'function') dW();
-  }
+  if (typeof dW === 'function') dW();
 }
 
 function delSpItem(idx) {
@@ -208,7 +196,7 @@ function delSpItem(idx) {
 function addSpItem() {
   const val = $('spNewInp').value.trim();
   if (!val) return;
-  _si.push({text: val, weight: 1, image: ''});
+  _si.push({text: val, weight: 1});
   $('spNewInp').value = '';
   setStore('sp_v2', _si);
   renderSpList();
@@ -244,57 +232,12 @@ function handleSpPaste(e) {
   }).filter(s => s.length > 0);
   
   if (items.length > 0) {
-    items.forEach(t => _si.push({text: t, weight: 1, image: ''}));
+    items.forEach(t => _si.push({text: t, weight: 1}));
     $('spNewInp').value = '';
     renderSpList();
     if (typeof msg === 'function') msg(`${items.length} items added`);
   }
 }
-
-function isSafeImageUrl(url) {
-  try {
-    const value = String(url).trim();
-    if (!value) return true;
-    if (value.startsWith("data:image/")) return true;
-    const parsed = new URL(value);
-    return parsed.protocol === "http:" || parsed.protocol === "https:";
-  } catch {
-    return false;
-  }
-}
-
-function loadImagesAndDraw() {
-  let loaded = 0;
-  let toLoad = 0;
-  _si.forEach(item => {
-    if (item.image && !_imgCache[item.image] && isSafeImageUrl(item.image)) {
-      toLoad++;
-      const img = new Image();
-      img.crossOrigin = "Anonymous";
-      img.onload = () => { 
-        _imgCache[item.image] = img; 
-        loaded++; 
-        if(loaded === toLoad && typeof dW === 'function') dW(); 
-      };
-      img.onerror = () => { 
-        console.warn(`Image failed to load: ${item.image}`);
-        loaded++; 
-        if(loaded === toLoad && typeof dW === 'function') dW(); 
-      };
-      img.src = item.image;
-    }
-  });
-  
-  setTimeout(() => {
-    if(loaded < toLoad) {
-      loaded = toLoad;
-      if(typeof dW === 'function') dW();
-    }
-  }, 5000);
-
-  if (toLoad === 0 && typeof dW === 'function') dW();
-}
-
 
 // ── DRAW WHEEL ──
 function dW() {
@@ -401,13 +344,6 @@ function dW() {
     x.rotate(startAngle + sliceAngle / 2);
     
     let textOffset = R - 14;
-    
-    if (item.image && _imgCache[item.image]) {
-       const img = _imgCache[item.image];
-       const imgSize = Math.min(40, R * 0.35);
-       x.drawImage(img, textOffset - imgSize, -imgSize/2, imgSize, imgSize);
-       textOffset -= (imgSize + 8);
-    }
     
     x.textAlign = 'right';
     x.fillStyle = 'rgba(255,255,255,.95)';
@@ -774,7 +710,7 @@ function initSpinner() {
   _spElimMode = getStore('spElimMode', false);
   _spStats = getStore('spStats', {});
   
-  loadImagesAndDraw();
+  if (typeof dW === 'function') dW();
   renderSpList();
   renderSpStats();
   

@@ -1,6 +1,7 @@
 // ═══════════════════════════════════════════
 //  NUMBER RANDOMIZER (Acak Angka)
 // ═══════════════════════════════════════════
+let _lastNumResultText = '';
 
 function generateNumber() {
   const minInp = $('numMin');
@@ -128,11 +129,77 @@ function finalizeNumbers(min, max, count, allowDup, range, resArea, listArea, bt
     btn.style.pointerEvents = 'auto';
   }
   
+  const copyBtn = $('btnNumCopy');
+  if(copyBtn) copyBtn.style.display = 'inline-flex';
+  
+  _lastNumResultText = `*HASIL ACAK ANGKA*\n\n${results.join(', ')}`;
+  
+  let histWrap = $('numHist');
+  if(histWrap && histWrap.innerHTML.includes('—')) histWrap.innerHTML = '';
+  if (histWrap) {
+    const chip = document.createElement('div');
+    chip.className = 'sp-hist-chip';
+    chip.style.fontSize = '0.75rem';
+    chip.style.padding = '4px 12px';
+    let resStr = results.join(', ');
+    if(resStr.length > 50) resStr = resStr.substring(0, 47) + '...';
+    chip.innerHTML = `<span style="color:var(--t3)">[${min}-${max}] ➔</span> <strong style="color:var(--acc)">${resStr}</strong>`;
+    histWrap.prepend(chip);
+    if(histWrap.children.length > 30) histWrap.removeChild(histWrap.lastChild);
+  }
+  
   if (typeof conf === 'function') conf();
   if (typeof playWin === 'function') playWin();
   
 
   if (typeof announceA11y === 'function') {
     announceA11y(`Angka diacak: ${results.join(', ')}`);
+  }
+}
+
+async function copyNumResult() {
+  if(!_lastNumResultText) return;
+  const success = typeof copyTextSafe === 'function' ? await copyTextSafe(_lastNumResultText) : false;
+  if(typeof msg === 'function') {
+    msg(success ? (typeof t === 'function' ? t('msg_copied')||'Disalin!' : 'Disalin!') : 'Gagal menyalin');
+  }
+}
+
+function clearNumHist() {
+  const h = $('numHist');
+  if(h) h.innerHTML = '<span style="color:var(--t3)">—</span>';
+  if(typeof playTick === 'function') playTick();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (typeof getStore === 'function') {
+    const minInp = $('numMin');
+    if(minInp) minInp.value = getStore('numMin', 1);
+    
+    const maxInp = $('numMax');
+    if(maxInp) maxInp.value = getStore('numMax', 100);
+    
+    const countInp = $('numCount');
+    if(countInp) countInp.value = getStore('numCount', 1);
+    
+    const dupCheck = $('numDuplicate');
+    if(dupCheck) dupCheck.checked = getStore('numDuplicate', false) === 'true' || getStore('numDuplicate', false) === true;
+    
+    const inputs = ['numMin', 'numMax', 'numCount'];
+    inputs.forEach(id => {
+      const el = $(id);
+      if (el) el.addEventListener('input', saveNumSettings);
+    });
+    
+    if(dupCheck) dupCheck.addEventListener('change', saveNumSettings);
+  }
+});
+
+function saveNumSettings() {
+  if (typeof setStore === 'function') {
+    setStore('numMin', $('numMin')?.value || 1);
+    setStore('numMax', $('numMax')?.value || 100);
+    setStore('numCount', $('numCount')?.value || 1);
+    setStore('numDuplicate', $('numDuplicate')?.checked || false);
   }
 }

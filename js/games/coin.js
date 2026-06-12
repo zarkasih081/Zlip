@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════
 //  3. COIN (Mega 3D)
 // ═══════════════════════════════════════════
-let _cCount=1, _cFlipping=false, _cTheme='gold';
+let _cCount=1, _cFlipping=false, _cTheme='gold', _cLight=false;
 let _coinStatH=0, _coinStatT=0;
 let _coinFlipCount = 0;
 let _lastResArray = ['H']; // Default to Heads on initial load
@@ -23,6 +23,7 @@ function setCoinTheme(th, btn) {
   _cTheme = th;
   document.querySelectorAll('#p-cn .d-type-btn').forEach(b => b.classList.remove('on'));
   btn.classList.add('on');
+  setStore('cTheme', _cTheme);
   updateIdleCoins();
 }
 
@@ -30,6 +31,14 @@ function adjCoinCount(d){
   if(_cFlipping) return;
   _cCount = Math.max(1, Math.min(10, _cCount+d)); 
   $('cCount').textContent = _cCount; 
+  setStore('cCount', _cCount);
+  updateIdleCoins();
+}
+
+function toggleCoinLightMode() {
+  const chk = $('cLightToggle');
+  if(chk) _cLight = chk.checked;
+  setStore('cLightMode', _cLight);
   updateIdleCoins();
 }
 
@@ -64,6 +73,11 @@ function create3DCoin() {
   const wrap = document.createElement('div');
   wrap.className = 'coin-3d rolling';
   
+  if (_cLight) {
+    pWrap.style.perspective = 'none';
+    wrap.style.transformStyle = 'flat';
+  }
+  
   const heads = document.createElement('div');
   heads.className = 'coin-face coin-heads';
   heads.style.webkitBackfaceVisibility = 'hidden';
@@ -76,19 +90,22 @@ function create3DCoin() {
   tails.style.backfaceVisibility = 'hidden';
   tails.innerHTML = '<img src="assets/images/coin-tails.webp" style="width:100%; height:100%; border-radius:50%; object-fit:cover; pointer-events:none; position:relative; z-index:5; opacity: 1; filter: contrast(1.06) saturate(1.08);">';
   
-  // 3D Cylinder Edge Layers
-  const edgeWrap = document.createElement('div');
-  edgeWrap.className = 'coin-edge-wrap';
-  for(let i=1; i<=8; i++) { // 8 layers of thickness (from -4px to 4px)
-    let layer = document.createElement('div');
-    layer.className = 'coin-layer';
-    layer.style.transform = `translateZ(${i - 4}px)`;
-    edgeWrap.appendChild(layer);
-  }
-  
   wrap.appendChild(heads);
   wrap.appendChild(tails);
-  wrap.appendChild(edgeWrap);
+  
+  if (!_cLight) {
+    // 3D Cylinder Edge Layers
+    const edgeWrap = document.createElement('div');
+    edgeWrap.className = 'coin-edge-wrap';
+    for(let i=1; i<=8; i++) { // 8 layers of thickness (from -4px to 4px)
+      let layer = document.createElement('div');
+      layer.className = 'coin-layer';
+      layer.style.transform = `translateZ(${i - 4}px)`;
+      edgeWrap.appendChild(layer);
+    }
+    wrap.appendChild(edgeWrap);
+  }
+  
   pWrap.appendChild(wrap);
   
   return { pWrap, wrap };
@@ -203,3 +220,23 @@ function clearCHist() {
   $('cHist').innerHTML = '<span style="color:var(--t3)">—</span>';
   if (typeof playTick === 'function') playTick();
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (typeof getStore === 'function') {
+    _cCount = parseInt(getStore('cCount', 1));
+    if(isNaN(_cCount) || _cCount < 1) _cCount = 1;
+    const cCountEl = $('cCount');
+    if(cCountEl) cCountEl.textContent = _cCount;
+    
+    _cTheme = getStore('cTheme', 'gold');
+    const dTypeBtns = document.querySelectorAll('#p-cn .d-type-btn');
+    dTypeBtns.forEach(b => {
+      b.classList.remove('on');
+      if (b.getAttribute('onclick') && b.getAttribute('onclick').includes(`'${_cTheme}'`)) b.classList.add('on');
+    });
+
+    _cLight = getStore('cLightMode', false) === 'true' || getStore('cLightMode', false) === true;
+    const chk = $('cLightToggle');
+    if(chk) chk.checked = _cLight;
+  }
+});

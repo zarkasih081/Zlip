@@ -21,8 +21,8 @@ function getTgAssignableTasks(requiredCount, uniqueOnly) {
   const tasks = shuffleArray(parseTgTasks());
   if (!tasks.length) return [];
   if (uniqueOnly && tasks.length < requiredCount) {
-    msg(t('msg_tg_task_short') || 'Jumlah tugas belum cukup untuk pembagian unik.');
-    return [];
+    msg(typeof t === 'function' ? (t('msg_tg_task_short') || 'Jumlah tugas belum cukup untuk pembagian unik.') : 'Jumlah tugas belum cukup untuk pembagian unik.');
+    return null;
   }
   return tasks;
 }
@@ -30,6 +30,8 @@ function getTgAssignableTasks(requiredCount, uniqueOnly) {
 function assignTasksToTeams(teams, taskMode, uniqueOnly) {
   const requiredCount = taskMode === 'team' ? teams.length : teams.reduce((sum, team) => sum + team.length, 0);
   const tasks = getTgAssignableTasks(requiredCount, uniqueOnly);
+  if (tasks === null) return null;
+  
   let taskIdx = 0;
   const teamsWithTasks = teams.map(team => team.map(member => ({
     name: typeof member === 'string' ? member : member.name,
@@ -119,10 +121,16 @@ function renderTeamResult(animate = true) {
 function genTeams(){
   const txt = $('tgI').value;
   let names = txt.split(/[\n,]+/).map(x => x.trim()).filter(x => x);
-  if(names.length < 2) return msg(t('msg_tg_err_min') || t('msg_tg_err_min'));
+  
+  if ($('tgRemoveDup') && $('tgRemoveDup').checked) {
+    names = [...new Set(names)];
+    $('tgI').value = names.join('\n');
+  }
+  
+  if(names.length < 2) return msg(typeof t === 'function' ? (t('msg_tg_err_min') || 'Minimal 2 nama') : 'Minimal 2 nama');
 
   const tc = Math.max(2, parseInt($('tgCount').value) || 2);
-  if(tc > names.length) return msg(t('msg_tg_err_max') || t('msg_tg_err_max'));
+  if(tc > names.length) return msg(typeof t === 'function' ? (t('msg_tg_err_max') || 'Jumlah kelompok melebihi daftar nama') : 'Jumlah kelompok melebihi daftar nama');
 
   names = shuffleArray(names);
   
@@ -136,7 +144,10 @@ function genTeams(){
     teams[idx % tc].push(player);
   });
 
-  const { teamsWithTasks, teamTaskGroups } = assignTasksToTeams(teams, taskMode, uniqueOnly);
+  const assignment = assignTasksToTeams(teams, taskMode, uniqueOnly);
+  if (!assignment) return;
+  
+  const { teamsWithTasks, teamTaskGroups } = assignment;
 
   _lastTeams = teamsWithTasks;
   _lastTeamTaskGroups = teamTaskGroups;
@@ -167,7 +178,10 @@ function shuffleTeamTasks() {
   const uniqueOnly = $('tgUniqueTasks') ? $('tgUniqueTasks').checked : false;
   const teamsWithoutTasks = _lastTeams.map(team => team.map(member => member.name));
   if (!parseTgTasks().length) return msg(t('msg_tg_task_need') || 'Tambahkan tugas dulu sebelum mengacak!');
-  const { teamsWithTasks, teamTaskGroups } = assignTasksToTeams(teamsWithoutTasks, taskMode, uniqueOnly);
+  const assignment = assignTasksToTeams(teamsWithoutTasks, taskMode, uniqueOnly);
+  if (!assignment) return;
+  const { teamsWithTasks, teamTaskGroups } = assignment;
+  
   _lastTeams = teamsWithTasks;
   _lastTeamTaskGroups = teamTaskGroups;
   _lastTeamTaskMode = taskMode;
@@ -179,30 +193,30 @@ function shuffleTeamTasks() {
 }
 
 async function copyTeams() {
-  if(!_lastTeams || _lastTeams.length === 0) return msg(t('msg_tg_err_empty') || t('msg_tg_err_empty'));
+  if(!_lastTeams || _lastTeams.length === 0) return msg(typeof t === 'function' ? (t('msg_tg_err_empty') || 'Daftar kosong') : 'Daftar kosong');
 
   const hdrStr = typeof t === 'function' ? (t('tg_res_hdr') || 'HASIL PEMBAGIAN TIM') : 'HASIL PEMBAGIAN TIM';
   const tmStr = typeof t === 'function' ? (t('tg_res_team') || 'TIM') : 'TIM';
   const pplStr = typeof t === 'function' ? (t('tg_res_ppl') || 'Orang') : 'Orang';
   const taskTitle = typeof t === 'function' ? (t('tg_task_title') || 'Tugas') : 'Tugas';
 
-  let resultText = `${hdrStr}\n\n`;
+  let resultText = `*${hdrStr}*\n\n`;
   _lastTeams.forEach((team, i) => {
     if(!team.length) return;
-    resultText += `${tmStr.toUpperCase()} ${i + 1} (${team.length} ${pplStr}):\n`;
+    resultText += `*${tmStr.toUpperCase()} ${i + 1} (${team.length} ${pplStr}):*\n`;
     if (_lastTeamTaskGroups[i] && _lastTeamTaskGroups[i].length) {
-      resultText += `   ${taskTitle}: ${_lastTeamTaskGroups[i].join(', ')}\n`;
+      resultText += `   _${taskTitle}:_ ${_lastTeamTaskGroups[i].join(', ')}\n`;
     }
     team.forEach(member => {
-      resultText += `   - ${member.name}${member.task ? ` (${member.task})` : ''}\n`;
+      resultText += `   - ${member.name}${member.task ? ` (_${member.task}_)` : ''}\n`;
     });
     resultText += "\n";
   });
 
-  const success = await copyTextSafe(resultText);
+  const success = typeof copyTextSafe === 'function' ? await copyTextSafe(resultText) : false;
   if (success) {
-    msg(t('msg_tg_copied'));
+    if(typeof msg === 'function') msg(typeof t === 'function' ? (t('msg_tg_copied') || 'Disalin') : 'Disalin');
   } else {
-    msg(t('msg_tg_copy_fail') || "Gagal menyalin. Salin manual dari teks yang ditampilkan.");
+    if(typeof msg === 'function') msg(typeof t === 'function' ? (t('msg_tg_copy_fail') || "Gagal menyalin.") : "Gagal menyalin.");
   }
 }

@@ -262,4 +262,27 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+  
+  // iOS PWA instructions
+  const isIos = () => {
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    return /iphone|ipad|ipod/.test(userAgent);
+  };
+  const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
+  
+  if (isIos() && !isInStandaloneMode()) {
+    setTimeout(() => {
+      const iosBanner = document.createElement('div');
+      iosBanner.className = 'card cls-pop-anim';
+      iosBanner.style.cssText = 'position:fixed; bottom:80px; left:50%; transform:translateX(-50%); width:90%; max-width:400px; z-index:9999; background:var(--bg2); border:2px solid var(--acc); box-shadow:0 10px 30px rgba(0,0,0,0.3); padding:16px; text-align:center; display:flex; flex-direction:column; gap:8px; align-items:center;';
+      iosBanner.innerHTML = `
+        <button onclick="this.parentElement.remove()" style="position:absolute; top:8px; right:8px; background:none; border:none; color:var(--t2); cursor:pointer;"><i data-lucide="x" style="width:16px; height:16px;"></i></button>
+        <div style="font-weight:800; color:var(--t1);">Pasang Aplikasi Zlip</div>
+        <div style="font-size:0.85rem; color:var(--t2);">Untuk pengalaman lebih cepat (Offline), pasang Zlip di perangkat iOS Anda.</div>
+        <div style="font-size:0.8rem; background:var(--bg3); padding:8px; border-radius:8px; width:100%; margin-top:4px;">Tap ikon <strong>Share</strong> di browser lalu pilih <br/><strong>"Add to Home Screen"</strong> <i data-lucide="plus-square" style="width:14px; vertical-align:middle;"></i></div>
+      `;
+      document.body.appendChild(iosBanner);
+      if (window.lucide) lucide.createIcons({ root: iosBanner });
+    }, 3000);
+  }
 });

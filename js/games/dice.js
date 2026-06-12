@@ -3,19 +3,22 @@
 // ═══════════════════════════════════════════
 let _dCount = 2, _dType = 6, _dTheme = 'default';
 let _diceRollCount = 0;
-let _lastDiceResArray = [6, 6]; // Initial default
-let _diceStats = {};
+let _lastDiceResArray = [6, 6];
+let _diceStats = { 4:{}, 6:{}, 8:{}, 10:{}, 12:{}, 20:{} };
+let _isRolling = false;
 
 function setDTheme(theme, btn) {
   _dTheme = theme;
   document.querySelectorAll('#diceThemeRow .d-type-btn').forEach(b => b.classList.remove('on'));
   if (btn) btn.classList.add('on');
+  setStore('dTheme', _dTheme);
   updateIdleDice();
 }
 
 function adjDice(d){ 
   _dCount = Math.max(1, Math.min(10, _dCount+d)); 
   $('dCount').textContent = _dCount; 
+  setStore('dCount', _dCount);
   updateIdleDice();
 }
 
@@ -27,6 +30,7 @@ function setDType(t, btn){
     let b = Array.from(document.querySelectorAll('#diceTypeRow .d-type-btn')).find(el => el.textContent === `D${t}`);
     if(b) b.classList.add('on');
   }
+  setStore('dType', _dType);
   updateIdleDice();
   renderDiceStats();
 }
@@ -43,6 +47,23 @@ function createD6Face(num) {
   else if (num === 6) f.innerHTML = `<div class="die-dot dot-tl"></div><div class="die-dot dot-ml"></div><div class="die-dot dot-bl"></div><div class="die-dot dot-tr"></div><div class="die-dot dot-mr"></div><div class="die-dot dot-br"></div>`;
   
   return f;
+}
+
+function getDieSvg(type, val, theme) {
+  const isDark = theme === 'dark';
+  const c1 = isDark ? '#333' : theme === 'neon' ? '#111' : theme === 'gold' ? '#D4AF37' : '#fff';
+  const c2 = isDark ? '#111' : theme === 'neon' ? '#ff006e' : theme === 'gold' ? '#996515' : '#ccc';
+  const tC = isDark ? '#fff' : theme === 'neon' ? '#06d6a0' : theme === 'gold' ? '#fff' : 'var(--acc)';
+  
+  let p = '';
+  if(type===4) p = `<polygon points="50,5 95,90 5,90" fill="${c1}" stroke="${c2}" stroke-width="2"/><polygon points="50,5 50,90 95,90" fill="${c2}" opacity="0.3"/>`;
+  else if(type===8) p = `<polygon points="50,5 95,50 50,95 5,50" fill="${c1}" stroke="${c2}" stroke-width="2"/><polygon points="50,5 95,50 50,95" fill="${c2}" opacity="0.3"/><line x1="5" y1="50" x2="95" y2="50" stroke="${c2}" stroke-width="1"/>`;
+  else if(type===10) p = `<polygon points="50,5 95,40 50,95 5,40" fill="${c1}" stroke="${c2}" stroke-width="2"/><polygon points="50,5 95,40 50,95" fill="${c2}" opacity="0.3"/><polygon points="5,40 95,40 50,60" fill="none" stroke="${c2}" stroke-width="1"/>`;
+  else if(type===12) p = `<polygon points="50,5 95,35 80,90 20,90 5,35" fill="${c1}" stroke="${c2}" stroke-width="2"/><polygon points="50,25 75,45 65,75 35,75 25,45" fill="${c2}" opacity="0.3" stroke="${c2}"/>`;
+  else if(type===20) p = `<polygon points="50,5 95,30 95,70 50,95 5,70 5,30" fill="${c1}" stroke="${c2}" stroke-width="2"/><polygon points="50,5 95,30 50,60" fill="${c2}" opacity="0.2" stroke="${c2}"/><polygon points="50,5 5,30 50,60" fill="${c2}" opacity="0.4" stroke="${c2}"/><polygon points="50,95 95,70 50,60" fill="${c2}" opacity="0.6" stroke="${c2}"/><polygon points="50,95 5,70 50,60" fill="${c2}" opacity="0.8" stroke="${c2}"/>`;
+  else p = `<rect x="5" y="5" width="90" height="90" rx="10" fill="${c1}" stroke="${c2}" stroke-width="2"/>`;
+
+  return `<svg viewBox="0 0 100 100" style="width:100%;height:100%;position:absolute;top:0;left:0;z-index:0">${p}</svg><div style="position:relative;z-index:1;font-family:'Plus Jakarta Sans',sans-serif;font-size:${type>12?1.3:1.6}rem;font-weight:900;color:${tC};text-shadow:0 1px 2px rgba(0,0,0,0.3)">${val}</div>`;
 }
 
 function updateIdleDice() {
@@ -81,14 +102,19 @@ function updateIdleDice() {
     } else {
       const df = document.createElement('div'); 
       df.className = `die-flat roll-anim die-theme-${_dTheme}`;
-      df.innerHTML = `<span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:${_dType>12?1.4:1.8}rem;font-weight:900;color:var(--acc)">${v}</span><span style="position:absolute;bottom:5px;right:8px;font-size:.55rem;color:var(--t3);font-weight:700">D${_dType}</span>`;
+      df.style.display = 'flex';
+      df.style.alignItems = 'center';
+      df.style.justifyContent = 'center';
+      df.style.position = 'relative';
+      df.innerHTML = getDieSvg(_dType, v, _dTheme) + `<span style="position:absolute;bottom:5px;right:8px;font-size:.55rem;color:var(--t3);font-weight:700;z-index:2">D${_dType}</span>`;
       stg.appendChild(df);
     }
   }
 }
 
 function roll(){
-  if(_dCount <= 0 || _dType <= 0) return;
+  if(_dCount <= 0 || _dType <= 0 || _isRolling) return;
+  _isRolling = true;
 
   const stg=$('dS'), res=[];
   if(!stg) return;
@@ -105,9 +131,8 @@ function roll(){
     const v=Math.floor(cryptoRandom()*_dType)+1; 
     res.push(v);
     _lastDiceResArray = res;
-    if (_dType === 6) {
-      _diceStats[v] = (_diceStats[v] || 0) + 1;
-    }
+    if(!_diceStats[_dType]) _diceStats[_dType] = {};
+    _diceStats[_dType][v] = (_diceStats[_dType][v] || 0) + 1;
     
     if(_dType===6) {
       const pWrap = document.createElement('div');
@@ -147,7 +172,11 @@ function roll(){
     } else {
       const df = document.createElement('div'); 
       df.className = `die-flat die-theme-${_dTheme}`;
-      df.innerHTML = `<span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:${_dType>12?1.4:1.8}rem;font-weight:900;color:var(--acc)">${v}</span><span style="position:absolute;bottom:5px;right:8px;font-size:.55rem;color:var(--t3);font-weight:700">D${_dType}</span>`;
+      df.style.display = 'flex';
+      df.style.alignItems = 'center';
+      df.style.justifyContent = 'center';
+      df.style.position = 'relative';
+      df.innerHTML = getDieSvg(_dType, v, _dTheme) + `<span style="position:absolute;bottom:5px;right:8px;font-size:.55rem;color:var(--t3);font-weight:700;z-index:2">D${_dType}</span>`;
       df.style.animationDelay = `${i*80}ms`;
       stg.appendChild(df);
       setTimeout(()=>df.classList.add('roll-anim'), i*80);
@@ -193,15 +222,15 @@ function roll(){
     
     if (typeof announceA11y === 'function') announceA11y(`Dadu menunjukkan ${sum}`);
     
-    if (_dType === 6) {
-      setStore('diceStats', _diceStats);
-      renderDiceStats();
-    }
+    setStore('diceStats', _diceStats);
+    renderDiceStats();
+    
+    _isRolling = false;
   }, 1050);
 }
 
 function resetDiceStats() {
-  _diceStats = {};
+  _diceStats[_dType] = {};
   setStore('diceStats', _diceStats);
   renderDiceStats();
   if(typeof msg === 'function') msg(t('sp_reset') || 'Di-reset!');
@@ -211,14 +240,10 @@ function renderDiceStats() {
   const container = $('dStatsContainer');
   if(!container) return;
   
-  if(_dType !== 6) {
-    container.innerHTML = '<div style="color:var(--t3);font-size:0.75rem;padding:8px">Statistik visual grafik hanya tersedia untuk Dadu 6 (D6).</div>';
-    return;
-  }
-  
-  const entries = Object.entries(_diceStats).map(e => [parseInt(e[0]), e[1]]).filter(e => e[0] >= 1 && e[0] <= 6);
+  let currentStats = _diceStats[_dType] || {};
+  const entries = Object.entries(currentStats).map(e => [parseInt(e[0]), e[1]]).filter(e => e[0] >= 1 && e[0] <= _dType);
   if(entries.length === 0) {
-    container.innerHTML = '<div style="color:var(--t3);font-size:0.75rem;padding:8px">Belum ada data lemparan D6.</div>';
+    container.innerHTML = `<div style="color:var(--t3);font-size:0.75rem;padding:8px">Belum ada data lemparan D${_dType}.</div>`;
     return;
   }
   
@@ -253,12 +278,24 @@ function clearDHist() {
 
 if(document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
-    _diceStats = getStore('diceStats', {});
+    _dCount = getStore('dCount', 2);
+    _dType = getStore('dType', 6);
+    _dTheme = getStore('dTheme', 'default');
+    _diceStats = getStore('diceStats', { 4:{}, 6:{}, 8:{}, 10:{}, 12:{}, 20:{} });
+    if($('dCount')) $('dCount').textContent = _dCount;
+    setDType(_dType);
+    setDTheme(_dTheme);
     updateIdleDice();
     renderDiceStats();
   });
 } else {
-  _diceStats = getStore('diceStats', {});
+  _dCount = getStore('dCount', 2);
+  _dType = getStore('dType', 6);
+  _dTheme = getStore('dTheme', 'default');
+  _diceStats = getStore('diceStats', { 4:{}, 6:{}, 8:{}, 10:{}, 12:{}, 20:{} });
+  if($('dCount')) $('dCount').textContent = _dCount;
+  setDType(_dType);
+  setDTheme(_dTheme);
   updateIdleDice();
   renderDiceStats();
 }

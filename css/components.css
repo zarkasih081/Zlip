@@ -254,8 +254,91 @@ textarea.inp { resize: vertical; min-height: 100px; line-height: 1.6 }
 .sp-action-row {
   display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: center;
 }
+.sp-toggle-btn {
+  background: var(--glass);
+  color: var(--t2);
+  border: 1px solid var(--glass-border);
+}
+.sp-toggle-btn span {
+  min-width: 0;
+}
 
 .sp-side { min-width: 0 }
+
+.sp-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.sp-panel-head .lbl {
+  margin: 0;
+}
+.sp-save-btn {
+  justify-content: flex-end;
+  line-height: 1.25;
+  min-height: 30px;
+  padding: 4px 6px;
+  text-align: right;
+  white-space: normal;
+}
+.sp-save-btn:hover {
+  color: var(--acc);
+}
+.sp-share-btn {
+  background: var(--acc-grad);
+  border: 1px solid rgba(255,179,0,.25);
+  border-radius: 10px;
+  color: #111;
+  font-weight: 800;
+  min-height: 32px;
+  padding: 5px 10px;
+}
+.sp-share-btn:hover {
+  color: #111;
+  transform: translateY(-1px);
+}
+.sp-saved-wheels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+}
+.sp-saved-empty {
+  color: var(--t3);
+  font-size: .75rem;
+  line-height: 1.4;
+}
+.sp-saved-chip {
+  display: inline-flex;
+  align-items: stretch;
+  max-width: 100%;
+  min-width: 0;
+}
+.sp-saved-load {
+  border-radius: 10px 0 0 10px;
+  max-width: 190px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sp-saved-delete {
+  align-items: center;
+  background: var(--rose);
+  border-color: rgba(255,255,255,.12);
+  border-left: 0;
+  border-radius: 0 10px 10px 0;
+  color: #fff;
+  display: inline-flex;
+  justify-content: center;
+  padding: 4px 8px;
+}
+.sp-saved-delete:hover {
+  background: #dc2626;
+  color: #fff;
+}
 
 /* Preset buttons */
 .sp-preset-row {
@@ -272,6 +355,22 @@ textarea.inp { resize: vertical; min-height: 100px; line-height: 1.6 }
 .sp-preset-btn:hover {
   background: var(--acc-s); color: var(--acc);
   border-color: rgba(255,179,0,.3);
+}
+
+@media(max-width:600px) {
+  .sp-action-row .btn {
+    width: min(100%, 320px);
+  }
+  .sp-panel-head {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .sp-panel-head .sp-stat-reset {
+    margin-left: auto;
+  }
+  .sp-saved-load {
+    max-width: 250px;
+  }
 }
 
 /* ══════════════════════════════════════

@@ -62,7 +62,7 @@ window.playWin = function() {
 
 window.playTickPremium = function() {
   if (typeof GlobalState !== 'undefined' && !GlobalState.sound) return;
-  // Crisp glass/crystal tick
+  // Crisp premium tick
   playTone(1200, 'sine', 0.03, 0.15);
   setTimeout(() => playTone(800, 'triangle', 0.04, 0.1), 10);
 };
@@ -92,4 +92,3 @@ window.playDiceHit = function() {
   // Satisfying chime
   setTimeout(() => playTone(1046.50, 'triangle', 0.5, 0.3), 30); 
 };
-

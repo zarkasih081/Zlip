@@ -110,7 +110,7 @@
     </aside>
     
     <!-- Drawer Menu Mobile -->
-    <div id="mobileDrawer" class="mobile-drawer" onclick="if(event.target === this) toggleMobileMenu()">
+    <div id="mobileDrawer" class="mobile-drawer" aria-hidden="true" data-open="false" onclick="if(event.target === this) toggleMobileMenu()">
       <div class="mobile-drawer-content" onclick="event.stopPropagation()">
         <div class="drawer-pill"></div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
@@ -185,7 +185,8 @@
             </div>
             <div class="sp-action-row">
               <button class="btn btn-g" id="spBtn" onclick="spin()"><span data-i18n="sp_spin_btn"><i data-lucide="zap" style="width:18px"></i> Putar</span></button>
-              <button class="btn btn-sm" id="elimToggle" onclick="toggleElimMode()" style="background:var(--glass);color:var(--t2);border:1px solid var(--glass-border)"><span id="elimToggleText" data-i18n="sp_elim_off"><i data-lucide="minus-circle" style="width:16px"></i> Eliminasi: Nonaktif</span></button>
+              <button class="btn btn-sm sp-toggle-btn" id="elimToggle" onclick="toggleElimMode()"><span id="elimToggleText" data-i18n="sp_elim_off"><i data-lucide="minus-circle" style="width:16px"></i> Eliminasi: Nonaktif</span></button>
+              <button class="btn btn-sm sp-toggle-btn" id="noRepToggle" onclick="toggleNoRepMode()"><span id="noRepToggleText" data-i18n="sp_no_rep_off"><i data-lucide="ban" style="width:16px"></i> Tanpa Pengulangan: Nonaktif</span></button>
             </div>
             <div class="rc" id="spR"><span data-i18n="sp_ready">Siap diputar!</span></div>
           </div>
@@ -200,8 +201,20 @@
               <button class="sp-preset-btn" onclick="loadSpPreset('day')"><span data-i18n="sp_pre_day"><i data-lucide="calendar-days" style="width:14px; margin-right:4px"></i> Hari</span></button>
             </div>
             <div class="sep"></div>
+            <!-- Saved Wheels -->
+            <div class="sp-panel-head">
+              <div class="lbl" data-i18n="sp_saved_lbl">Roda Tersimpan</div>
+              <button class="sp-stat-reset sp-save-btn" onclick="saveSpWheel()"><i data-lucide="save" style="width:12px;height:12px"></i> <span data-i18n="sp_save_current">Simpan Roda Saat Ini</span></button>
+            </div>
+            <div id="spSavedWheels" class="sp-saved-wheels">
+              <span class="sp-saved-empty" data-i18n="sp_saved_empty">Belum ada roda yang disimpan.</span>
+            </div>
+            <div class="sep"></div>
             <!-- Item Editor -->
-            <div class="lbl" data-i18n="sp_item_lbl">Daftar Item</div>
+            <div class="sp-panel-head">
+              <div class="lbl" data-i18n="sp_item_lbl">Daftar Item</div>
+              <button class="sp-stat-reset sp-share-btn" onclick="shareSpUrl()" title="Salin URL Roda" data-i18n-title="sp_share_title"><i data-lucide="share-2" style="width:14px;height:14px"></i> <span data-i18n="sp_share">Bagikan</span></button>
+            </div>
             <div class="sp-editor">
               <div id="spList" class="sp-list"></div>
               <div class="sp-add-row">
@@ -537,11 +550,11 @@
         </div>
         
         <div class="cls-tab-bar">
-          <button class="cls-tab-btn on" id="tab-cls-nama" onclick="switchClassTab('nama')">Pilih Nama</button>
-          <button class="cls-tab-btn" id="tab-cls-tanya" onclick="switchClassTab('tanya')">Pertanyaan</button>
-          <button class="cls-tab-btn" id="tab-cls-flash" onclick="switchClassTab('flash')">Flashcard</button>
-          <button class="cls-tab-btn" id="tab-cls-act" onclick="switchClassTab('act')">Aktivitas</button>
-          <button class="cls-tab-btn" id="tab-cls-peran" onclick="switchClassTab('peran')">Acak Peran</button>
+          <button class="cls-tab-btn on" id="tab-cls-nama" data-tab="nama">Pilih Nama</button>
+          <button class="cls-tab-btn" id="tab-cls-tanya" data-tab="tanya">Pertanyaan</button>
+          <button class="cls-tab-btn" id="tab-cls-flash" data-tab="flash">Flashcard</button>
+          <button class="cls-tab-btn" id="tab-cls-act" data-tab="act">Aktivitas</button>
+          <button class="cls-tab-btn" id="tab-cls-peran" data-tab="peran">Acak Peran</button>
         </div>
         
         <div class="cls-grid">
@@ -598,6 +611,7 @@
             <textarea class="inp" id="clsFlashInp" placeholder="Contoh:
 Ibu kota Indonesia? | Jakarta
 1 + 1 = ? | 2" data-i18n-placeholder="cls_fc_inp" style="min-height:80px; margin-bottom:12px; resize:vertical; font-family:monospace;"></textarea>
+            <div id="clsFlashCount" style="font-size:0.75rem; color:var(--t3); margin-bottom:8px;">Total kartu: 0</div>
             <div class="cls-flashcard-wrap" onclick="flipClassFlash()" style="margin-top:16px;">
               <div class="cls-flashcard" id="clsFlashCard">
                 <div class="cls-fc-face cls-fc-front">
@@ -884,7 +898,7 @@ Ibu kota Indonesia? | Jakarta
           
           <div style="display:flex;gap:10px">
             <input type="file" id="importFile" accept=".json" style="display:none" onchange="if(this.files[0]) importData(this.files[0])">
-            <button class="btn btn-g" onclick="$('importFile').click()" style="flex:1">
+            <button class="btn btn-g" onclick="document.getElementById('importFile').click()" style="flex:1">
               <i data-lucide="upload"></i> <span data-i18n="set_btn_imp">Impor Data</span>
             </button>
             <button class="btn btn-g" onclick="resetAllData()" style="flex:1">

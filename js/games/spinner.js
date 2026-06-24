@@ -2,9 +2,8 @@
 //  1. SPINNER — MEGA UPGRADE
 // ═══════════════════════════════════════════
 let _si = [], _sAng = 0, _sPalette = 'rainbow', _spSpin = false;
-let _spElimMode = false;
+let _spElimMode = false, _spNoRepMode = false, _spLastWinnerIdx = -1;
 let _spStats = {};
-const _imgCache = {};
 const SP_COLORS = {
   default: ['#ef4444','#f97316','#eab308','#22c55e','#FFD54F','#3b82f6','#8b5cf6','#ec4899'],
   neon:    ['#ff006e','#fb5607','#ffbe0b','#3a86ff','#8338ec','#06d6a0','#118ab2','#ff006e'],
@@ -78,6 +77,120 @@ function toggleElimMode() {
   setStore('spElimMode', _spElimMode);
 }
 
+
+// ── NO REPEAT MODE ──
+function spText(key, fallback) {
+  return typeof t === 'function' ? t(key, fallback) : fallback;
+}
+
+function updateNoRepModeUI() {
+  const textEl = document.getElementById('noRepToggleText');
+  const btnEl = document.getElementById('noRepToggle');
+  const label = _spNoRepMode
+    ? spText('sp_no_rep_on', '<i data-lucide="ban" style="width:16px"></i> Tanpa Pengulangan: Aktif')
+    : spText('sp_no_rep_off', '<i data-lucide="ban" style="width:16px"></i> Tanpa Pengulangan: Nonaktif');
+  if (textEl) {
+    textEl.innerHTML = label;
+    if (window.lucide) lucide.createIcons({ root: textEl });
+  }
+  if (btnEl) btnEl.classList.toggle('on', _spNoRepMode);
+}
+
+function toggleNoRepMode() {
+  _spNoRepMode = !_spNoRepMode;
+  updateNoRepModeUI();
+  setStore('spNoRepMode', _spNoRepMode);
+}
+
+// ── SAVED WHEELS ──
+function getSavedSpWheels() {
+  const saved = getStore('spSavedWheels', []);
+  return Array.isArray(saved) ? saved : [];
+}
+
+function saveSpWheel() {
+  const name = prompt(spText('sp_saved_prompt', 'Masukkan nama roda ini (misal: Roda Kelas A):'));
+  if(!name || !name.trim()) return;
+  const saved = getSavedSpWheels();
+  if(saved.length >= 10) saved.shift(); // Max 10
+  saved.push({name: name.trim().substring(0, 40), items: JSON.parse(JSON.stringify(_si))});
+  setStore('spSavedWheels', saved);
+  msg(spText('sp_saved_ok', 'Roda tersimpan!'), 3000, 'success');
+  renderSavedWheels();
+}
+
+function loadSpWheel(idx) {
+  const saved = getSavedSpWheels();
+  if(!saved[idx]) return;
+  _si = JSON.parse(JSON.stringify(saved[idx].items));
+  renderSpList();
+  msg(spText('sp_saved_loaded', `Roda "${saved[idx].name}" dimuat!`).replace('{name}', () => saved[idx].name), 3000, 'success');
+}
+
+function delSpWheel(idx) {
+  if(!confirm(spText('sp_saved_delete_confirm', 'Hapus roda ini?'))) return;
+  const saved = getSavedSpWheels();
+  saved.splice(idx, 1);
+  setStore('spSavedWheels', saved);
+  renderSavedWheels();
+}
+
+function renderSavedWheels() {
+  const container = document.getElementById('spSavedWheels');
+  if(!container) return;
+  const saved = getSavedSpWheels();
+  container.replaceChildren();
+  if(saved.length === 0) {
+    const empty = document.createElement('span');
+    empty.className = 'sp-saved-empty';
+    empty.textContent = spText('sp_saved_empty', 'Belum ada roda yang disimpan.');
+    container.appendChild(empty);
+    return;
+  }
+  saved.forEach((w, i) => {
+    const btnGroup = document.createElement('div');
+    btnGroup.className = 'sp-saved-chip';
+
+    const loadBtn = document.createElement('button');
+    loadBtn.type = 'button';
+    loadBtn.className = 'sp-preset-btn sp-saved-load';
+    loadBtn.textContent = (w && w.name) ? w.name : spText('sp_saved_untitled', 'Roda tanpa nama');
+    loadBtn.title = loadBtn.textContent;
+    loadBtn.addEventListener('click', () => loadSpWheel(i));
+
+    const delBtn = document.createElement('button');
+    delBtn.type = 'button';
+    delBtn.className = 'sp-preset-btn sp-saved-delete';
+    delBtn.setAttribute('aria-label', spText('sp_saved_delete', 'Hapus roda'));
+    delBtn.innerHTML = '<i data-lucide="trash-2" style="width:14px;height:14px;"></i>';
+    delBtn.addEventListener('click', () => delSpWheel(i));
+
+    btnGroup.append(loadBtn, delBtn);
+    container.appendChild(btnGroup);
+  });
+  if(window.lucide) lucide.createIcons({root:container});
+}
+
+// ── SHARE URL ──
+async function shareSpUrl() {
+  try {
+    const data = JSON.stringify(_si.map(i => ({t: i.text, w: i.weight})));
+    const b64 = btoa(encodeURIComponent(data));
+    const url = new URL(window.location.href);
+    url.searchParams.set('sp', b64);
+    const copied = typeof copyTextSafe === 'function'
+      ? await copyTextSafe(url.toString())
+      : false;
+    msg(
+      copied ? spText('sp_share_ok', 'URL Roda berhasil disalin ke clipboard!') : spText('sp_share_fail', 'Gagal menyalin URL'),
+      3000,
+      copied ? 'success' : 'error'
+    );
+  } catch(e) {
+    msg(spText('sp_share_fail', 'Gagal menyalin URL'), 3000, 'error');
+  }
+}
+
 // ── STATISTICS ──
 function recordStat(item) {
   if (!_spStats[item]) _spStats[item] = 0;
@@ -133,11 +246,7 @@ function renderSpList() {
   list.innerHTML = '';
   _si.forEach((item, i) => {
     const row = document.createElement('div');
-    row.className = 'sp-item-row';
-    row.style.flexDirection = 'column';
-    row.style.alignItems = 'stretch';
-    row.style.gap = '8px';
-    row.style.flexShrink = '0';
+    row.className = 'sp-item-row sp-item-row--editor';
     const C = SP_COLORS[_sPalette] || SP_COLORS.default;
     const color = C[i % C.length];
     
@@ -145,14 +254,14 @@ function renderSpList() {
     const weightVal = item.weight || 1;
     
     row.innerHTML = `
-      <div style="display:flex; width:100%; gap:8px; align-items:center;">
-        <div class="sp-item-color" style="background:${color}; flex-shrink:0;"></div>
-        <input type="text" class="sp-item-text" style="flex:1" placeholder="Nama opsi...">
-        <div style="display:flex; align-items:center; gap:4px; flex-shrink:0;">
-          <span style="font-size:0.65rem; color:var(--t3); font-weight:700;" title="Semakin besar bobot, semakin luas area opsi di roda">BOBOT:</span>
-          <input type="number" class="inp sp-item-weight" min="1" max="100" title="Bobot Peluang" style="width:48px; padding:4px; font-size:0.75rem; text-align:center;">
-        </div>
-        <button class="sp-item-del" style="flex-shrink:0;"><i data-lucide="trash-2" style="width:16px;height:16px"></i></button>
+      <div class="sp-item-main">
+        <div class="sp-item-color" style="background:${color};"></div>
+        <input type="text" class="sp-item-text" placeholder="${spText('sp_item_placeholder', 'Nama opsi...')}">
+        <label class="sp-item-weight-wrap">
+          <span class="sp-item-weight-label" title="${spText('sp_weight_hint', 'Semakin besar bobot, semakin luas area opsi di roda')}">${spText('sp_weight_lbl', 'Bobot')}:</span>
+          <input type="number" class="inp sp-item-weight" min="1" max="100" title="${spText('sp_weight_title', 'Bobot Peluang')}">
+        </label>
+        <button class="sp-item-del"><i data-lucide="trash-2" style="width:16px;height:16px"></i></button>
       </div>
     `;
     
@@ -257,7 +366,6 @@ function dW() {
     wrap.className = 'sp-wrap';
     if (_sPalette === 'gold') wrap.classList.add('sp-glow-gold', 'sp-glow');
     else if (_sPalette === 'neon') wrap.classList.add('sp-glow-neon', 'sp-glow');
-    else if (_sPalette === 'crystal') wrap.classList.add('sp-glow-crystal', 'sp-glow');
   }
 
   x.clearRect(0, 0, W, W);
@@ -270,10 +378,6 @@ function dW() {
     ringGrad.addColorStop(0, '#555');
     ringGrad.addColorStop(0.5, '#222');
     ringGrad.addColorStop(1, '#111');
-  } else if (_sPalette === 'crystal') {
-    ringGrad.addColorStop(0, '#FFFFFF');
-    ringGrad.addColorStop(0.5, '#E0FFFF');
-    ringGrad.addColorStop(1, '#AFEEEE');
   } else if (_sPalette === 'neon') {
     ringGrad.addColorStop(0, '#ff006e');
     ringGrad.addColorStop(0.5, '#3a86ff');
@@ -296,7 +400,9 @@ function dW() {
   // ── Segments with gradient ──
   const totalWeight = _si.reduce((sum, item) => sum + (item.weight || 1), 0);
   let currentAngle = 0;
-  
+
+  const skipText = _si.length > 80;
+
   _si.forEach((item, i) => {
     const w = item.weight || 1;
     const sliceAngle = (w / totalWeight) * 2 * Math.PI;
@@ -339,24 +445,25 @@ function dW() {
     x.restore();
     
     // Text & Image
-    x.save();
-    x.translate(cx, cx);
-    x.rotate(startAngle + sliceAngle / 2);
-    
-    let textOffset = R - 14;
-    
-    x.textAlign = 'right';
-    x.fillStyle = 'rgba(255,255,255,.95)';
-    const textStr = item.text || '';
-    const avgSliceAngle = 2 * Math.PI / n;
-    const fs = Math.max(10, Math.min(16, (R * 0.62) / n));
-    x.font = `700 ${fs}px Inter, sans-serif`;
-    x.shadowColor = 'rgba(0,0,0,.5)';
-    x.shadowBlur = 3;
-    const maxTextLen = Math.max(6, Math.floor((textOffset + 14) / (fs * 0.55)));
-    let displayText = textStr.length > maxTextLen ? textStr.substring(0, maxTextLen - 1) + '…' : textStr;
-    x.fillText(displayText, textOffset, fs / 3);
-    x.restore();
+    if (!skipText) {
+      x.save();
+      x.translate(cx, cx);
+      x.rotate(startAngle + sliceAngle / 2);
+
+      let textOffset = R - 14;
+
+      x.textAlign = 'right';
+      x.fillStyle = 'rgba(255,255,255,.95)';
+      const textStr = item.text || '';
+      const fs = Math.max(10, Math.min(16, (R * 0.62) / n));
+      x.font = `700 ${fs}px Inter, sans-serif`;
+      x.shadowColor = 'rgba(0,0,0,.5)';
+      x.shadowBlur = 3;
+      const maxTextLen = Math.max(6, Math.floor((textOffset + 14) / (fs * 0.55)));
+      let displayText = textStr.length > maxTextLen ? textStr.substring(0, maxTextLen - 1) + '…' : textStr;
+      x.fillText(displayText, textOffset, fs / 3);
+      x.restore();
+    }
     
     currentAngle += sliceAngle;
   });
@@ -488,7 +595,17 @@ function onDragMove(e) {
   if (delta < -180) delta += 360;
   
   _sAng += delta;
-  $('spCv').style.transform = `rotate(${_sAng}deg)`;
+  const cv = document.getElementById('spCv');
+  const wrap = document.querySelector('.sp-wrap');
+  if (cv) cv.style.transform = `rotate(${_sAng}deg)`;
+  if (cv && wrap) {
+    const rect = cv.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const nx = (clientX - cx) / (rect.width/2);
+    const ny = (clientY - cy) / (rect.height/2);
+    wrap.style.transform = `perspective(600px) rotateX(${-ny * 15}deg) rotateY(${nx * 15}deg)`;
+  }
   
   const now = Date.now();
   const dt = now - _dragTimestamp;
@@ -504,9 +621,16 @@ function onDragEnd(e) {
   if (_dragStartAngle === null) return;
   _dragStartAngle = null;
   
-  const cv = $('spCv');
+  const cv = document.getElementById('spCv');
   if (cv) cv.style.cursor = 'grab';
   
+  const wrap = document.querySelector('.sp-wrap');
+  if (wrap) {
+    wrap.style.transition = 'transform 0.4s ease';
+    wrap.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg)';
+    setTimeout(() => { wrap.style.transition = ''; }, 400);
+  }
+
   // Only spin if there's enough velocity
   const absVel = Math.abs(_dragVelocity);
   if (absVel > 1.5 && _si.length >= 2) {
@@ -532,7 +656,7 @@ function onDragEnd(e) {
       const oldIdx = getWinnerIdx(_spLastTickAng);
       const newIdx = getWinnerIdx(_sAng);
       if (oldIdx !== newIdx) {
-        if (['gold', 'neon', 'dark', 'crystal'].includes(_sPalette)) {
+        if (['gold', 'neon', 'dark'].includes(_sPalette)) {
           if (typeof playTickPremium === 'function') playTickPremium();
         } else {
           if (typeof playTick === 'function') playTick();
@@ -571,6 +695,16 @@ function initDragSpin() {
 // ── SPIN (BUTTON) ──
 let _spVel = 0, _spLastTickAng = 0;
 
+function simulateSpinLanding(startVel, startAng) {
+  let a = startAng;
+  let v = startVel;
+  while(v > 0.08) {
+    a += v;
+    v *= 0.985;
+  }
+  return getWinnerIdx(a);
+}
+
 function spin() {
   if (_spSpin || !_si.length) {
     if (_si.length < 2) msg(t('sp_err_min') || t('sp_err_min_spin'));
@@ -585,6 +719,15 @@ function spin() {
   
   $('spCv').style.transition = 'none';
   _spVel = cryptoRandom() * 15 + 25;
+
+  if (_spNoRepMode && _si.length > 1 && _spLastWinnerIdx !== -1) {
+    let loopProtect = 0;
+    while(simulateSpinLanding(_spVel, _sAng) === _spLastWinnerIdx && loopProtect < 10) {
+       _spVel += 0.5 + cryptoRandom() * 1.5;
+       loopProtect++;
+    }
+  }
+
   _spLastTickAng = _sAng;
   
   function animate() {
@@ -594,7 +737,7 @@ function spin() {
     const oldIdx = getWinnerIdx(_spLastTickAng);
     const newIdx = getWinnerIdx(_sAng);
     if (oldIdx !== newIdx) {
-      if (['gold', 'neon', 'dark', 'crystal'].includes(_sPalette)) {
+      if (['gold', 'neon', 'dark'].includes(_sPalette)) {
         if (typeof playTickPremium === 'function') playTickPremium();
       } else {
         if (typeof playTick === 'function') playTick();
@@ -626,6 +769,7 @@ function finishSpin() {
   if (ptr) ptr.classList.remove('spinning');
   
   const winnerIdx = getWinnerIdx(_sAng);
+  _spLastWinnerIdx = winnerIdx;
   const winner = _si[winnerIdx] || _si[0];
   const winnerText = winner.text;
   
@@ -643,7 +787,7 @@ function finishSpin() {
   
   recordStat(winnerText);
   
-  if (['gold', 'neon', 'dark', 'crystal'].includes(_sPalette)) {
+  if (['gold', 'neon', 'dark'].includes(_sPalette)) {
     if (typeof playWinPremium === 'function') playWinPremium();
   } else {
     if (typeof playWin === 'function') playWin();
@@ -697,18 +841,53 @@ function initSpinner() {
     window.removeEventListener('resize', _spResizeHandler);
   }
 
-  const storedSp2 = getStore('sp_v2', null);
-  if (storedSp2 && Array.isArray(storedSp2) && storedSp2.length > 0 && typeof storedSp2[0] === 'object') {
-    _si = storedSp2;
-  } else {
-    // Fallback for v1 data
-    const storedSp = getStore('sp', "Pizza\nBurger\nSushi\nNasi Goreng\nMie Ayam\nBakso");
-    _si = storedSp.split('\n').filter(x => x.trim()).map(t => ({text: t, weight: 1, image: ''}));
+  const urlParams = new URLSearchParams(window.location.search);
+  const spB64 = urlParams.get('sp');
+  let loadedFromUrl = false;
+
+  if (spB64) {
+    try {
+      const dataStr = decodeURIComponent(atob(spB64));
+      const arr = JSON.parse(dataStr);
+      if(Array.isArray(arr) && arr.length > 0) {
+        const parsedItems = arr
+          .map(i => ({
+            text: String((i && (i.t || i.text)) || '').trim().substring(0, 50),
+            weight: Math.max(1, Math.min(100, parseInt((i && (i.w || i.weight)) || 1, 10) || 1))
+          }))
+          .filter(i => i.text)
+          .slice(0, 200);
+        if (parsedItems.length > 0) {
+          _si = parsedItems;
+          loadedFromUrl = true;
+        }
+      }
+      const url = new URL(window.location.href);
+      url.searchParams.delete('sp');
+      window.history.replaceState({}, document.title, url.toString());
+      if (loadedFromUrl) {
+        setTimeout(() => msg(spText('sp_url_loaded', 'Roda kustom berhasil dimuat dari URL!'), 3000, 'success'), 500);
+      }
+    } catch(e) {
+      console.error(e);
+    }
+  }
+
+  if (!loadedFromUrl) {
+    const storedSp2 = getStore('sp_v2', null);
+    if (storedSp2 && Array.isArray(storedSp2) && storedSp2.length > 0 && typeof storedSp2[0] === 'object') {
+      _si = storedSp2;
+    } else {
+      // Fallback for v1 data
+      const storedSp = getStore('sp', "Pizza\nBurger\nSushi\nNasi Goreng\nMie Ayam\nBakso");
+      _si = storedSp.split('\n').filter(x => x.trim()).map(t => ({text: t, weight: 1, image: ''}));
+    }
   }
   
   _sPalette = getStore('spPalette', 'default');
   _spElimMode = getStore('spElimMode', false);
   _spStats = getStore('spStats', {});
+  _spNoRepMode = getStore('spNoRepMode', false);
   
   if (typeof dW === 'function') dW();
   renderSpList();
@@ -725,6 +904,11 @@ function initSpinner() {
     if (window.lucide) lucide.createIcons({ root: elimText });
   }
   
+  // Set no repeat button state
+  updateNoRepModeUI();
+
+  renderSavedWheels();
+
   // Set palette button state
   const paletteBtns = document.querySelectorAll('#spColorRow .d-type-btn');
   paletteBtns.forEach(btn => {

@@ -39,29 +39,76 @@ input[type="checkbox"] {
 .sp-editor { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
 .sp-list {
   display: flex; flex-direction: column; gap: 8px;
-  max-height: 200px; overflow-y: auto; padding-right: 4px;
+  max-height: 200px; overflow-x: hidden; overflow-y: auto; padding-right: 4px;
 }
 .sp-item-row {
   display: flex; align-items: center; gap: 8px;
   background: var(--bg3); border: 1px solid var(--bdr);
   padding: 6px 12px; border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  min-width: 0;
+}
+.sp-item-row--editor {
+  align-items: stretch;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+.sp-item-main {
+  align-items: center;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  min-width: 0;
+  width: 100%;
 }
 .sp-item-color {
   width: 14px; height: 14px; border-radius: 50%;
   border: 1.5px solid rgba(0,0,0,0.1);
+  flex-shrink: 0;
 }
 .sp-item-text {
-  flex: 1; outline: none; background: transparent; border: 0;
+  flex: 1; min-width: 0; outline: none; background: transparent; border: 0;
   color: var(--t1); font-family: inherit; font-size: 0.85rem;
+}
+.sp-item-weight-wrap {
+  align-items: center;
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: 4px;
+  min-width: 0;
+}
+.sp-item-weight-label {
+  color: var(--t3);
+  font-size: .62rem;
+  font-weight: 800;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+}
+.sp-item-weight {
+  font-size: .75rem;
+  padding: 4px;
+  text-align: center;
+  width: 50px;
 }
 .sp-item-del {
   background: transparent; border: 0; color: var(--t3); cursor: pointer;
   display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
   transition: all 0.2s;
 }
 .sp-item-del:hover { color: var(--rose); transform: scale(1.1); }
-.sp-add-row { display: flex; gap: 8px; align-items: center; }
+.sp-add-row { display: flex; gap: 8px; align-items: center; min-width: 0; }
+.sp-add-row .inp { min-width: 0; }
+
+@media (max-width: 420px) {
+  .sp-item-main {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+  .sp-item-weight-wrap {
+    grid-column: 2 / 4;
+    justify-self: start;
+  }
+}
 
 /* WINNER MODAL */
 

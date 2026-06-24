@@ -6,7 +6,14 @@
   backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
   opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
 }
-.mobile-drawer.open { opacity: 1; pointer-events: auto; }
+.mobile-drawer.open,
+.mobile-drawer[data-open="true"] {
+  opacity: 1 !important;
+  pointer-events: auto;
+}
+body.drawer-open {
+  overflow: hidden;
+}
 
 .mobile-drawer-content {
   position: absolute; bottom: 0; left: 0; width: 100%;
@@ -17,7 +24,10 @@
   box-shadow: 0 -10px 40px rgba(0,0,0,0.2);
   display: flex; flex-direction: column;
 }
-.mobile-drawer.open .mobile-drawer-content { transform: translateY(0); }
+.mobile-drawer.open .mobile-drawer-content,
+.mobile-drawer[data-open="true"] .mobile-drawer-content {
+  transform: translateY(0) !important;
+}
 
 /* Pull Handle Pill */
 .drawer-pill {

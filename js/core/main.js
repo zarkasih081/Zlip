@@ -93,7 +93,18 @@ function go(n) {
 function toggleMobileMenu() {
   const drawer = document.getElementById('mobileDrawer');
   if (drawer) {
-    drawer.classList.toggle('open');
+    const isOpen = drawer.classList.toggle('open');
+    const content = drawer.querySelector('.mobile-drawer-content');
+    drawer.dataset.open = isOpen ? 'true' : 'false';
+    drawer.setAttribute('aria-hidden', String(!isOpen));
+    drawer.style.transition = 'none';
+    drawer.style.opacity = isOpen ? '1' : '0';
+    drawer.style.pointerEvents = isOpen ? 'auto' : 'none';
+    if (content) {
+      content.style.transition = 'none';
+      content.style.transform = isOpen ? 'translateY(0)' : 'translateY(100%)';
+    }
+    document.body.classList.toggle('drawer-open', isOpen);
   }
 }
 
@@ -195,12 +206,12 @@ window.onload = () => {
   // 4. Lucide Icons & Language
   if (typeof applyLanguage === 'function') applyLanguage();
   else if (window.lucide) lucide.createIcons();
+  if (typeof updateDynamicTexts === 'function') updateDynamicTexts();
   
   // 5. PWA Service Worker Registration
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./service-worker.js')
       .then(reg => {
-        console.log('SW Registered', reg);
         reg.onupdatefound = () => {
           const installingWorker = reg.installing;
           installingWorker.onstatechange = () => {
@@ -228,7 +239,7 @@ window.onload = () => {
           };
         };
       })
-      .catch(err => console.log('SW Registration failed', err));
+      .catch(err => console.warn('SW Registration failed', err));
   }
 };
 
@@ -254,7 +265,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Wait for the user to respond to the prompt
         const { outcome } = await deferredPrompt.userChoice;
         if (outcome === 'accepted') {
-          console.log('User accepted the install prompt');
           const pwaCard = document.getElementById('pwaCard');
           if(pwaCard) pwaCard.style.display = 'none';
         }

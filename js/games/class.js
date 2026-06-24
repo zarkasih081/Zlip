@@ -2,24 +2,6 @@
 //  ALAT KELAS (Menu Kelas)
 // ═══════════════════════════════════════════
 
-function switchClassTab(tabId) {
-  // Hide all contents and sidebars
-  document.querySelectorAll('.cls-tab-content').forEach(el => el.style.display = 'none');
-  document.querySelectorAll('.cls-sb-content').forEach(el => el.style.display = 'none');
-  document.querySelectorAll('.cls-tab-btn').forEach(el => el.classList.remove('on'));
-  
-  // Show selected
-  const tabContent = document.getElementById(tabId);
-  if (tabContent) tabContent.style.display = 'block';
-  
-  const sbContent = document.getElementById(tabId.replace('cls-', 'cls-sb-'));
-  if (sbContent) sbContent.style.display = 'block';
-  
-  // Update button state
-  const btn = document.querySelector(`.cls-tab-btn[data-tab="${tabId}"]`);
-  if (btn) btn.classList.add('on');
-}
-
 // ── 0. LOCAL STORAGE ──
 function saveClassData() {
   localStorage.setItem('zlip_cls_name', $('clsNameInp')?.value || '');
@@ -356,64 +338,7 @@ function loadSampleData(type) {
 }
 
 
-// ── 4. BAGI KELOMPOK ──
-function pickClassTeams() {
-  let list = getClassNameList();
-  if(list.length === 0) return msg('Daftar nama (di tab Pilih Nama) kosong!');
-  
-  const countInp = $('clsTeamCount');
-  let teamCount = countInp ? parseInt(countInp.value) || 2 : 2;
-  if(teamCount < 2) teamCount = 2;
-  if(teamCount > list.length) teamCount = list.length;
-  
-  let pool = shuffleArray([...list]);
-  
-  let teams = Array.from({length: teamCount}, () => []);
-  pool.forEach((name, i) => {
-    teams[i % teamCount].push(name);
-  });
-  
-  const res = $('clsTeamResult');
-  res.innerHTML = '';
-  
-  teams.forEach((team, i) => {
-    let div = document.createElement('div');
-    div.className = 'sp-stat-row cls-pop-anim';
-    div.style.padding = '8px 12px';
-    div.style.flexDirection = 'column';
-    div.style.alignItems = 'flex-start';
-    
-    let title = document.createElement('div');
-    title.style.color = 'var(--acc)';
-    title.style.fontWeight = 'bold';
-    title.style.marginBottom = '4px';
-    title.textContent = 'Kelompok ' + (i + 1);
-    
-    let members = document.createElement('div');
-    members.textContent = team.join(', ');
-    
-    div.appendChild(title);
-    div.appendChild(members);
-    res.appendChild(div);
-  });
-  
-  _lastTeamsText = "*HASIL PEMBAGIAN KELOMPOK*\n\n" + teams.map((t, i) => `*Kelompok ${i + 1}:*\n${t.join(', ')}`).join('\n\n');
-  
-  const copyBtn = $('clsTeamCopyBtn');
-  if(copyBtn) copyBtn.style.display = 'block';
-  
-  if (typeof conf === 'function') conf();
-  if (typeof playWin === 'function') playWin();
-}
-
-let _lastTeamsText = "";
-async function copyClassTeamsResult() {
-  if (!_lastTeamsText) return;
-  const success = typeof copyTextSafe === 'function' ? await copyTextSafe(_lastTeamsText) : false;
-  if (typeof msg === 'function') msg(success ? 'Disalin ke clipboard!' : 'Gagal menyalin');
-}
-
-// ── 5. ACAK PERAN ──
+// ── 4. ACAK PERAN ──
 function copyNamesToRoles() {
   const nameInp = $('clsNameInp');
   const roleMemInp = $('clsRoleMemInp');
@@ -490,7 +415,7 @@ async function copyClassRoles() {
   if (typeof msg === 'function') msg(success ? 'Disalin ke clipboard!' : 'Gagal menyalin');
 }
 
-// ── 6. RESET DATA ──
+// ── 5. RESET DATA ──
 function resetClassTab(tab) {
   if (tab === 'nama') {
     if($('clsNameInp')) $('clsNameInp').value = '';
